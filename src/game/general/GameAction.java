@@ -1,5 +1,6 @@
 package game.general;
 
-public class GameAction {
-
+public abstract class GameAction {
+ 
+	public abstract GameState perform (GameState currentState);
 }
