@@ -18,4 +18,16 @@ public class MulinoState extends GameState {
 		return actions;
 	}
 
+	@Override
+	public boolean isOver() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isWinning() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

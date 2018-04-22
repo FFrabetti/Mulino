@@ -1,19 +1,21 @@
 package game.mind;
 
 abstract class State {
-	private static StateInit stateInit = new StateInit();
-	private static StatePlay statePlay = new StatePlay();
-	private static StateWait stateWait = new StateWait();
-	private static StateEnd stateEnd = new StateEnd();
-
 	
-	public static State selectState(Mind mind) {
+	public static StateInit stateInit = new StateInit();
+	public static StatePlay statePlay = new StatePlay();
+	public static StateWait stateWait = new StateWait();
+	public static StateEnd stateEnd = new StateEnd();
+
+//	public static State selectState(Mind mind) {
 //		if(...) return statoX
 //		else if(...) return statoY
 //		etc...
-		return stateInit;
-	}
+//		return stateInit;
+//	}
 	
-	public abstract void Handle();
+	public abstract void handle(Mind mind);
+	
+	public abstract State transition(Mind mind);
 	
 }
