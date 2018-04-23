@@ -1,9 +1,22 @@
 package game.general;
 
-public abstract class GameServer {
+import java.io.IOException;
 
-	public abstract void playAction(GameAction action);
+public abstract class GameServer {
 	
-	public abstract GameState getCurrentState();
+	private GameFactory gameFactory;
+
+	public GameFactory getGameFactory() {
+		return gameFactory;
+	}
 	
+	public void setGameFactory(GameFactory gameFactory) {
+		this.gameFactory = gameFactory;
+	}
+	
+	public abstract void playAction(GameAction action) throws IOException;
+	
+	public abstract GameState getCurrentState() throws ClassNotFoundException, IOException;
+
+
 }

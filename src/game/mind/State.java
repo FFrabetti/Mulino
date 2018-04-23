@@ -1,5 +1,7 @@
 package game.mind;
 
+import java.io.IOException;
+
 abstract class State {
 	
 	public static StateInit stateInit = new StateInit();
@@ -14,7 +16,7 @@ abstract class State {
 //		return stateInit;
 //	}
 	
-	public abstract void handle(Mind mind);
+	public abstract void handle(Mind mind) throws ClassNotFoundException, IOException;
 	
 	public abstract State transition(Mind mind);
 	

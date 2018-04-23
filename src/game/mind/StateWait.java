@@ -1,5 +1,7 @@
 package game.mind;
 
+import java.io.IOException;
+
 import game.general.GameState;
 
 class StateWait extends State {
@@ -11,7 +13,7 @@ class StateWait extends State {
 	//		current state = state read
 	//	-> mind stateChanged
 	@Override
-	public void handle(Mind mind) {
+	public void handle(Mind mind) throws ClassNotFoundException, IOException {
 		ThinkingThread thinkingThr = new ThinkingThread(mind.getStrategyFactory(), mind.getCurrentState());
 		thinkingThr.start();
 		

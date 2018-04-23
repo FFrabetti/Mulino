@@ -1,5 +1,7 @@
 package game.mind;
 
+import java.io.IOException;
+
 import game.general.GameAction;
 import game.general.Timer;
 
@@ -13,8 +15,10 @@ class StatePlay extends State {
 	// 		play action (game server)
 	// -> mind stateChanged
 	@Override
-	public void handle(Mind mind) {
-		Timer timer = new Timer(); 	// the nr of seconds should be defined somewhere...
+	public void handle(Mind mind) throws IOException {
+		//intero solo per far compilare, visto che timer vuole un numero di secondi
+		int DAVERIFICARE = 10;
+		Timer timer = new Timer(DAVERIFICARE); 	// the nr of seconds should be defined somewhere...
 		ThinkingThread thinkingThr = new ThinkingThread(mind.getStrategyFactory(), mind.getCurrentState());
 		timer.start();
 		thinkingThr.start();

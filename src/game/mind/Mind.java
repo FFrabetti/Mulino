@@ -1,5 +1,7 @@
 package game.mind;
 
+import java.io.IOException;
+
 import game.general.GameServer;
 import game.general.GameState;
 
@@ -21,7 +23,7 @@ public abstract class Mind {
 	}
 	
 	// starts the FSA
-	public void start() {
+	public void start() throws ClassNotFoundException, IOException {
 		state.handle(this); // do set-up operations
 		stateChanged(); // INIT -> PLAY|WAIT
 	}
@@ -45,7 +47,7 @@ public abstract class Mind {
 	// 1: first to play, >1: wait for your turn
 	public abstract int getGamePosition();
 	
-	private void stateChanged() {
+	private void stateChanged() throws ClassNotFoundException, IOException {
 //		state = State.selectState(this);
 		
 		while(state != State.stateEnd) {
