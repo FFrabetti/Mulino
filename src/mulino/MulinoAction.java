@@ -3,15 +3,23 @@ package mulino;
 import game.general.GameAction;
 import game.general.GameState;
 
-public class MulinoAction extends GameAction {
+public abstract class MulinoAction extends GameAction {
 
-	@Override
-	public GameState perform(GameState currentState) {
-		MulinoState oldMs= (MulinoState) currentState;
-		// TODO Auto-generated method stub
-		
-		GameState newMs = new MulinoState();
-		return newMs;
+	protected int[] removeOpponentChecker;
+	
+	protected MulinoAction() {
+		this.removeOpponentChecker = null;
 	}
-
+	
+	protected MulinoAction(int[] enemyPosition) {
+		this.removeOpponentChecker[0] = enemyPosition[0];
+		this.removeOpponentChecker[1] = enemyPosition[1];
+	}
+	
+	public int[] getRemoveOpponentChecker() {
+		return this.removeOpponentChecker;
+	}
+	 
+	@Override
+	public abstract GameState perform(GameState currentState);
 }
