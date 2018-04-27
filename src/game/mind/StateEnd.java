@@ -4,7 +4,7 @@ class StateEnd extends State {
 
 	@Override
 	public void handle(Mind mind) {
-		System.out.println(mind.getCurrentState().isWinning() ? "YOU WON!" : "YOU LOST :(");
+//		System.out.println(mind.getCurrentState().isWinning() ? "YOU WON!" : "YOU LOST :(");
 	}
 
 	@Override

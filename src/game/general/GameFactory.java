@@ -28,7 +28,5 @@ public abstract class GameFactory {
 	public abstract GameState fromState(Object state);
 	
 	public abstract Object toAction(GameAction action);
-	
-	public abstract Strategy getStrategy(GameState state);
-	
+
 }

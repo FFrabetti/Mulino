@@ -5,10 +5,7 @@ import java.util.HashMap;
 import game.general.GameAction;
 import game.general.GameFactory;
 import game.general.GameState;
-import game.mind.Strategy;
 import mulino.State.Checker;
-import mulino.State.Phase;
-import mulino.strategy.MulinoPhase1Strategy;
 
 public class MulinoFactory extends GameFactory {
 
@@ -52,10 +49,6 @@ public class MulinoFactory extends GameFactory {
 		board.put(new int[] { 3, 0 }, b.get("g4"));
 		board.put(new int[] { 3, 3 }, b.get("g7"));
 		ms.setBoard(board);
-		
-		// TODO
-		// chi mi dice che colore sono?
-		ms.setDutyPlayer(checker);
 
 		return ms;
 	}
@@ -107,42 +100,11 @@ public class MulinoFactory extends GameFactory {
 		return act;
 	}
 
-	@Override
-	public Strategy getStrategy(GameState state) {
-		MulinoState ms = (MulinoState) state;
-		Strategy strategy = new MulinoPhase1Strategy(); // flyweight?
-
-		// TODO Auto-generated method stub
-		return strategy;
-	}
-
 	private String parseCoordinatesToString(int[] xy) {
-		int num;
-		String res = null;
-		switch (xy[0]) {
-		case -3:
-			num = xy[1] + 4;
-			res = "a" + num;
-		case -2:
-			num = xy[1] + 4;
-			res = "b" + num;
-		case -1:
-			num = xy[1] + 4;
-			res = "c" + num;
-		case -0:
-			num = xy[1] + 4;
-			res = "d" + num;
-		case 11:
-			num = xy[1] + 4;
-			res = "e" + num;
-		case 2:
-			num = xy[1] + 4;
-			res = "f" + num;
-		case 3:
-			num = xy[1] + 4;
-			res = "g" + num;
-		}
-		return res;
+		char c = (char) (xy[0]+3+'a');
+		int n = xy[1]+4;
+		
+		return c+""+n;
 	}
 
 }

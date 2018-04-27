@@ -3,12 +3,14 @@ package game.mind;
 import game.general.GameAction;
 import game.general.GameState;
 
-public class ThinkingThread extends Thread {
+public class ThinkingThread extends AlertingThread {
 
 	private GameState currentState;
 	private Strategy strategy;
 	
-	public ThinkingThread(StrategyFactory strategyFactory, GameState currentState) {
+	public ThinkingThread(WaitingQueue queue, StrategyFactory strategyFactory, GameState currentState) {
+		super(queue);
+		
 		this.currentState=currentState;
 		this.strategy=strategyFactory.selectStrategy(currentState);
 	}
@@ -21,6 +23,8 @@ public class ThinkingThread extends Thread {
 		Thread t = Thread.currentThread();
 		System.out.println("Thread " + t.getName() + ":ThinkingThread - incomincio a pensare");
 		strategy.chooseAction(currentState);
+		
+		alert(); // wakes up the mind
 	}
 
 }

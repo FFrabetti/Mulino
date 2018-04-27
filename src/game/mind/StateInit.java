@@ -1,11 +1,9 @@
 package game.mind;
 
-import java.io.IOException;
-
 class StateInit extends State {
 
 	@Override
-	public void handle(Mind mind) throws ClassNotFoundException, IOException {
+	public void handle(Mind mind) {
 		// set the initial state of the game (received from the server)
 		mind.setCurrentState(mind.getGameServer().getCurrentState()); // wait...
 	}

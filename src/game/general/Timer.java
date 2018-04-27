@@ -1,9 +1,14 @@
 package game.general;
 
-public class Timer extends Thread {
+import game.mind.AlertingThread;
+import game.mind.WaitingQueue;
+
+public class Timer extends AlertingThread {
 	private int seconds;
 
-	public Timer(int seconds) {
+	public Timer(WaitingQueue queue, int seconds) {
+		super(queue);
+		
 		this.seconds = seconds;
 	}
 	
@@ -18,6 +23,9 @@ public class Timer extends Thread {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		
+		alert(); // waking up the mind
+		
 		System.out.println("Thread " + t.getName() + ":Timer - tempo finito!");
 	}
 }

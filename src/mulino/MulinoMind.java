@@ -6,20 +6,21 @@ import game.mind.StrategyFactory;
 
 public class MulinoMind extends Mind {
 	
-	private mulino.State.Checker checker;
+	private MulinoTCPServer mServer;
 	
 	public MulinoMind(GameServer server, StrategyFactory strategyFactory) {
 		super(server, strategyFactory);
+		
+		mServer = (MulinoTCPServer)server;
 	}
 
 	@Override
 	public int getGamePosition() {
-		if(checker.equalsChecker('W'))
+		if(mServer.getDutyPlayer()==State.Checker.WHITE)
 			return 1;
-		else if(checker.equalsChecker('B'))
+		else if(mServer.getDutyPlayer()==State.Checker.BLACK)
 			return 2;
 		else return -1;
 	}
-	
 	
 }

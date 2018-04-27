@@ -1,7 +1,5 @@
 package game.mind;
 
-import java.io.IOException;
-
 import game.general.GameServer;
 import game.general.GameState;
 
@@ -17,13 +15,10 @@ public abstract class Mind {
 		this.strategyFactory = strategyFactory;
 		
 		state = State.stateInit;
-		
-		// what about the constructor of the sub-classes?
-//		stateChanged();
 	}
 	
 	// starts the FSA
-	public void start() throws ClassNotFoundException, IOException {
+	public void start() {
 		state.handle(this); // do set-up operations
 		stateChanged(); // INIT -> PLAY|WAIT
 	}
@@ -47,9 +42,7 @@ public abstract class Mind {
 	// 1: first to play, >1: wait for your turn
 	public abstract int getGamePosition();
 	
-	private void stateChanged() throws ClassNotFoundException, IOException {
-//		state = State.selectState(this);
-		
+	private void stateChanged() {	
 		while(state != State.stateEnd) {
 			state = state.transition(this); // polymorphism!
 			state.handle(this);
