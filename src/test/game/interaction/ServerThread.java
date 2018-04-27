@@ -1,4 +1,4 @@
-package game.interaction;
+package test.game.interaction;
 
 import java.io.*;
 import java.net.*;

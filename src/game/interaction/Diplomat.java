@@ -70,14 +70,4 @@ public class Diplomat {
 		//controllare se deve scrivere un generico Object o una GameAction
 	}
 	
-	
-	//main di test
-	public static void main(String[] args) throws Exception {
-		Diplomat d = new Diplomat();
-		
-		Object toSend= "Message from player";
-		d.write(toSend);
-		String received = (String) d.read();
-		System.out.println("Ricevuto " +received);
-	}
 }

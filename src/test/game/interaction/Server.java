@@ -1,4 +1,4 @@
-package game.interaction;
+package test.game.interaction;
 
 import java.net.ServerSocket;
 import java.net.Socket;
