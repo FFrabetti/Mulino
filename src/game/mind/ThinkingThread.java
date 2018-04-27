@@ -6,25 +6,21 @@ import game.general.GameState;
 public class ThinkingThread extends Thread {
 
 	private GameState currentState;
-	private StrategyFactory strategyFactory;
-	private GameAction selectedAction;
+	private Strategy strategy;
 	
 	public ThinkingThread(StrategyFactory strategyFactory, GameState currentState) {
 		this.currentState=currentState;
-		this.strategyFactory=strategyFactory;
+		this.strategy=strategyFactory.selectStrategy(currentState);
 	}
 
 	public GameAction getSelectedAction() {
-		return selectedAction;
+		return strategy.getSelectedAction();
 	}
 	
 	public void run() {
 		Thread t = Thread.currentThread();
 		System.out.println("Thread " + t.getName() + ":ThinkingThread - incomincio a pensare");
-		Strategy strategy =strategyFactory.selectStrategy(currentState);
-		this.selectedAction = strategy.chooseAction(currentState);
-		//to change...probably xD
-		//se viene interrotto, quale selectedAction setta??
+		strategy.chooseAction(currentState);
 	}
 
 }
