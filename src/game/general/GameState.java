@@ -8,6 +8,6 @@ public abstract class GameState {
 
 	public abstract boolean isOver();
 
-	public abstract boolean isWinning();
+//	public abstract boolean isWinning();
 	
 }

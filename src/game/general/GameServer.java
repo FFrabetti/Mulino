@@ -1,19 +1,9 @@
 package game.general;
 
-public abstract class GameServer {
+public interface GameServer {
 	
-	private GameFactory gameFactory;
-
-	public GameFactory getGameFactory() {
-		return gameFactory;
-	}
+	public void playAction(GameAction action);
 	
-	public void setGameFactory(GameFactory gameFactory) {
-		this.gameFactory = gameFactory;
-	}
-	
-	public abstract void playAction(GameAction action);
-	
-	public abstract GameState getCurrentState();
+	public GameState getCurrentState();
 
 }

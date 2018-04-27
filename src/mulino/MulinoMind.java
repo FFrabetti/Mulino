@@ -1,26 +1,23 @@
 package mulino;
 
-import game.general.GameServer;
 import game.mind.Mind;
 import game.mind.StrategyFactory;
+import mulino.shared.State;
 
 public class MulinoMind extends Mind {
 	
-	private MulinoTCPServer mServer;
+	private State.Checker checker;
 	
-	public MulinoMind(GameServer server, StrategyFactory strategyFactory) {
+	// interface MulinoServer per maggiore flessibilità?
+	public MulinoMind(MulinoTCPServer server, StrategyFactory strategyFactory) {
 		super(server, strategyFactory);
 		
-		mServer = (MulinoTCPServer)server;
+		checker = server.getChecker();
 	}
 
 	@Override
 	public int getGamePosition() {
-		if(mServer.getDutyPlayer()==State.Checker.WHITE)
-			return 1;
-		else if(mServer.getDutyPlayer()==State.Checker.BLACK)
-			return 2;
-		else return -1;
+		return checker==State.Checker.WHITE ? 1 : 2;
 	}
 	
 }
