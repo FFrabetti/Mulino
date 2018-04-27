@@ -1,6 +1,6 @@
-package mulino;
+package mulino.shared;
 
-public class Phase2Action extends Action {
+public class PhaseFinalAction extends Action {
 
 	private static final long serialVersionUID = 1L;
 	

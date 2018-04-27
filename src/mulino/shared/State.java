@@ -1,4 +1,4 @@
-package mulino;
+package mulino.shared;
 
 import java.io.Serializable;
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package mulino;
+package mulino.shared;
 
 public class Phase1Action extends Action {
 
