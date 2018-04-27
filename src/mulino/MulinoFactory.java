@@ -5,24 +5,24 @@ import java.util.HashMap;
 import game.general.GameAction;
 import game.general.GameFactory;
 import game.general.GameState;
-import mulino.State.Checker;
+import mulino.shared.*;
+import mulino.shared.State.*;
 
-public class MulinoFactory extends GameFactory {
+public class MulinoFactory extends GameFactory<State,Action> {
 
 	@Override
-	public GameState fromState(Object state) {
-		State s = (State) state;
+	public GameState fromState(State state) {
 		MulinoState ms = new MulinoState();
 
 		// ricopio le variabili
-		ms.setCurrentPhase(s.getCurrentPhase());
-		ms.setWhiteCheckers(s.getWhiteCheckers());
-		ms.setWhiteCheckersOnBoard(s.getWhiteCheckersOnBoard());
-		ms.setBlackCheckers(s.getBlackCheckers());
-		ms.setBlackCheckersOnBoard(s.getBlackCheckersOnBoard());
+		ms.setCurrentPhase(state.getCurrentPhase());
+		ms.setWhiteCheckers(state.getWhiteCheckers());
+		ms.setWhiteCheckersOnBoard(state.getWhiteCheckersOnBoard());
+		ms.setBlackCheckers(state.getBlackCheckers());
+		ms.setBlackCheckersOnBoard(state.getBlackCheckersOnBoard());
 
 		// converto il tabellone
-		HashMap<String, Checker> b = s.getBoard();
+		HashMap<String, Checker> b = state.getBoard();
 		HashMap<int[], Checker> board = new HashMap<>();
 		board.put(new int[] { -3, -3 }, b.get("a1"));
 		board.put(new int[] { -3, 0 }, b.get("a4"));
@@ -54,53 +54,67 @@ public class MulinoFactory extends GameFactory {
 	}
 
 	@Override
-	public Object toAction(GameAction action) {
+	public Action toAction(GameAction action) {
 		Action act = null;
-		if (action instanceof Phase1MulinoAction) {
-			Phase1MulinoAction ma = (Phase1MulinoAction) action;
-			Phase1Action a = new Phase1Action();
-			// converto la posizione "xy" in una "lettera_numero"
-			a.setPutPosition(parseCoordinatesToString(ma.getPutPosition()));
-			// converto la pedina da togliere (se presente)
-			if (ma.getRemoveOpponentChecker() == null)
-				a.setRemoveOpponentChecker(null);
-			else {
-				a.setRemoveOpponentChecker(parseCoordinatesToString(ma.getRemoveOpponentChecker()));
-			}
-			act = a;
-		} else if (action instanceof Phase2MulinoAction) {
-			Phase2MulinoAction ma = (Phase2MulinoAction) action;
-			Phase2Action a = new Phase2Action();
-			// converto la posizione "from" in una "lettera_numero"
-			a.setFrom(parseCoordinatesToString(ma.getFrom()));
-			// converto la posizione "to" in una "lettera_numero"
-			a.setTo(parseCoordinatesToString(ma.getTo()));
-			// converto la pedina da togliere (se presente)
-			if (ma.getRemoveOpponentChecker() == null)
-				a.setRemoveOpponentChecker(null);
-			else {
-				a.setRemoveOpponentChecker(parseCoordinatesToString(ma.getRemoveOpponentChecker()));
-			}
-			act = a;
-		} else if (action instanceof Phase3MulinoAction) {
-			Phase3MulinoAction ma = (Phase3MulinoAction) action;
-			PhaseFinalAction a = new PhaseFinalAction();
-			// converto la posizione "from" in una "lettera_numero"
-			a.setFrom(parseCoordinatesToString(ma.getFrom()));
-			// converto la posizione "to" in una "lettera_numero"
-			a.setTo(parseCoordinatesToString(ma.getTo()));
-			// converto la pedina da togliere (se presente)
-			if (ma.getRemoveOpponentChecker() == null)
-				a.setRemoveOpponentChecker(null);
-			else {
-				a.setRemoveOpponentChecker(parseCoordinatesToString(ma.getRemoveOpponentChecker()));
-			}
-			act = a;
+		
+		if (action instanceof Phase1MulinoAction)
+			act = toPhase1Action((Phase1MulinoAction)action);
+		else if (action instanceof Phase23MulinoAction) {
+			Phase23MulinoAction a = (Phase23MulinoAction)action;
+			act = a.getPhase()==Phase.SECOND ? toPhase2Action(a) : toPhaseFinalAction(a);
 		}
+		
 		return act;
 	}
 
-	private String parseCoordinatesToString(int[] xy) {
+	private Phase1Action toPhase1Action(Phase1MulinoAction action) {
+		Phase1Action result = new Phase1Action();
+		
+		// converto la posizione "to"
+		result.setPutPosition(parseCoordinates(action.getTo()));
+		
+		// converto la pedina da togliere (se presente)
+		if(action.getRemoveOpponent().isPresent())
+			result.setRemoveOpponentChecker(parseCoordinates(action.getRemoveOpponent().get()));
+		
+		return result;
+	}
+
+	private Phase2Action toPhase2Action(Phase23MulinoAction action) {
+		Phase2Action result = new Phase2Action();
+		
+		// converto la posizione "from"
+		result.setFrom(parseCoordinates(action.getFrom()));
+		
+		// converto la posizione "to"
+		result.setTo(parseCoordinates(action.getTo()));
+		
+		// converto la pedina da togliere (se presente)
+		if(action.getRemoveOpponent().isPresent())
+			result.setRemoveOpponentChecker(parseCoordinates(action.getRemoveOpponent().get()));
+		
+		return result;
+	}
+
+	// metodo uguale al precedente
+	// se le classi di destinazione fossero state in gerarchia ne sarebbe bastato uno...
+	private PhaseFinalAction toPhaseFinalAction(Phase23MulinoAction action) {
+		PhaseFinalAction result = new PhaseFinalAction();
+		
+		// converto la posizione "from"
+		result.setFrom(parseCoordinates(action.getFrom()));
+		
+		// converto la posizione "to"
+		result.setTo(parseCoordinates(action.getTo()));
+		
+		// converto la pedina da togliere (se presente)
+		if(action.getRemoveOpponent().isPresent())
+			result.setRemoveOpponentChecker(parseCoordinates(action.getRemoveOpponent().get()));
+		
+		return result;
+	}
+	
+	private String parseCoordinates(int[] xy) {
 		char c = (char) (xy[0]+3+'a');
 		int n = xy[1]+4;
 		

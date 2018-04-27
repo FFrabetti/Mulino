@@ -1,13 +1,14 @@
 package mulino;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 import game.general.GameAction;
 import game.general.GameState;
-import mulino.State.Checker;
-import mulino.State.Phase;
+import mulino.shared.State;
+import mulino.shared.State.Checker;
+import mulino.shared.State.Phase;
 
 public class MulinoState extends GameState {
 
@@ -61,11 +62,11 @@ public class MulinoState extends GameState {
 	// }
 
 	@Override
-	public Collection<GameAction> legitActions() {
-		Collection<GameAction> actions = new ArrayList<GameAction>();
+	public List<GameAction> legitActions() {
+		List<GameAction> actions = new ArrayList<GameAction>();
 		boolean spottedEnemies = false;
-		Collection<int[]> mulinoEnemies = new ArrayList<int[]>();
-		Collection<int[]> isolatedEnemies = new ArrayList<int[]>();
+		List<int[]> mulinoEnemies = new ArrayList<int[]>();
+		List<int[]> isolatedEnemies = new ArrayList<int[]>();
 
 		if (currentPhase.equalsName("First")) {
 			for (int[] xy : board.keySet()) {
@@ -131,16 +132,22 @@ public class MulinoState extends GameState {
 								}
 								// genero una nuova MulinoAction per ogni possibile pedina nemica isolata
 								for (int[] position : isolatedEnemies) {
-									actions.add(new Phase2MulinoAction(from, to, position));
+									Phase23MulinoAction a = new Phase23MulinoAction(from, to, position);
+									a.setPhase(currentPhase);
+									actions.add(a);
 								}
 								// se non ci sono pedine nemiche isolate posso rimuovere quelle nei mulini
 								if (isolatedEnemies.isEmpty()) {
 									for (int[] position : mulinoEnemies) {
-										actions.add(new Phase2MulinoAction(from, to, position));
+										Phase23MulinoAction a = new Phase23MulinoAction(from, to, position);
+										a.setPhase(currentPhase);
+										actions.add(a);
 									}
 								}
 							} else {
-								actions.add(new Phase2MulinoAction(from, to));
+								Phase23MulinoAction a = new Phase23MulinoAction(from, to);
+								a.setPhase(currentPhase);
+								actions.add(a);
 							}
 						}
 					}
@@ -171,16 +178,22 @@ public class MulinoState extends GameState {
 								}
 								// genero una nuova MulinoAction per ogni possibile pedina nemica isolata
 								for (int[] position : isolatedEnemies) {
-									actions.add(new Phase3MulinoAction(from, to, position));
+									Phase23MulinoAction a = new Phase23MulinoAction(from, to, position);
+									a.setPhase(currentPhase);
+									actions.add(a);
 								}
 								// se non ci sono pedine nemiche isolate posso rimuovere quelle nei mulini
 								if (isolatedEnemies.isEmpty()) {
 									for (int[] position : mulinoEnemies) {
-										actions.add(new Phase3MulinoAction(from, to, position));
+										Phase23MulinoAction a = new Phase23MulinoAction(from, to, position);
+										a.setPhase(currentPhase);
+										actions.add(a);
 									}
 								}
 							} else {
-								actions.add(new Phase3MulinoAction(from, to));
+								Phase23MulinoAction a = new Phase23MulinoAction(from, to);
+								a.setPhase(currentPhase);
+								actions.add(a);
 							}
 						}
 					}
@@ -196,19 +209,19 @@ public class MulinoState extends GameState {
 		return false;
 	}
 
-	@Override
-	public boolean isWinning() {
-		// manca la parte in cui vinco perché l'avversario non riesce più a muovere
-		// (fase 2)
-		if (currentPhase.equalsName("Final")) {
-			if (dutyPlayer.equalsChecker('W') && blackCheckersOnBoard < 3)
-				return true;
-		} else if (currentPhase.equalsName("Final")) {
-			if (dutyPlayer.equalsChecker('B') && whiteCheckersOnBoard < 3)
-				return true;
-		}
-		return false;
-	}
+//	@Override
+//	public boolean isWinning() {
+//		// manca la parte in cui vinco perché l'avversario non riesce più a muovere
+//		// (fase 2)
+//		if (currentPhase.equalsName("Final")) {
+//			if (dutyPlayer.equalsChecker('W') && blackCheckersOnBoard < 3)
+//				return true;
+//		} else if (currentPhase.equalsName("Final")) {
+//			if (dutyPlayer.equalsChecker('B') && whiteCheckersOnBoard < 3)
+//				return true;
+//		}
+//		return false;
+//	}
 
 	public void updatePhase() {
 		if (currentPhase.equalsName("First")) {
@@ -383,6 +396,53 @@ public class MulinoState extends GameState {
 
 	public void setBlackCheckersOnBoard(int blackCheckersOnBoard) {
 		this.blackCheckersOnBoard = blackCheckersOnBoard;
+	}
+
+	// per fase 1
+	public void newCheckerPlayed(int[] to, Checker player) {
+		board.replace(to, player); // aggiungo la pedina
+
+		// aggiorno le pedine ancora da posizionare e quelle in campo
+		setCheckers(player, getCheckers(player)-1);
+		setCheckersOnBoard(player, getCheckersOnBoard(player)+1);
+	}
+
+	public void moveChecker(int[] from, int[] to) {
+		Checker checker = board.get(from);
+		board.replace(from, Checker.EMPTY);		
+		board.replace(to, checker);
+	}
+
+	public void removeChecker(int[] pos, Checker player) {
+		board.replace(pos, Checker.EMPTY);
+		
+		setCheckersOnBoard(player, getCheckersOnBoard(player)-1);
+	}
+	
+	
+	// temporary utilities
+	// TODO: metodi evitabili se NON usassimo "white" e "black" nei NOMI di variabili e metodi...
+	
+	private int getCheckers(Checker player) {
+		return player==Checker.WHITE ? whiteCheckers : blackCheckers;
+	}
+
+	private void setCheckers(Checker player, int n) {
+		if(player==Checker.WHITE)
+			whiteCheckers = n;
+		else
+			blackCheckers = n;
+	}
+	
+	private int getCheckersOnBoard(Checker player) {
+		return player==Checker.WHITE ? whiteCheckersOnBoard : blackCheckersOnBoard;
+	}
+
+	private void setCheckersOnBoard(Checker player, int n) {
+		if(player==Checker.WHITE)
+			whiteCheckersOnBoard = n;
+		else
+			blackCheckersOnBoard = n;
 	}
 
 }
