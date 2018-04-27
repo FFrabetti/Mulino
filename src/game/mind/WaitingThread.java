@@ -8,4 +8,9 @@ public class WaitingThread extends Thread {
 		// TODO Auto-generated constructor stub
 	}
 
+	public ThinkingStatus getThinkingStatus() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

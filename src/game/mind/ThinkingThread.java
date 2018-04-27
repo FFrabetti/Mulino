@@ -8,11 +8,15 @@ public class ThinkingThread extends AlertingThread {
 	private GameState currentState;
 	private Strategy strategy;
 	
-	public ThinkingThread(WaitingQueue queue, StrategyFactory strategyFactory, GameState currentState) {
+	public ThinkingThread(WaitingQueue queue, StrategyFactory strategyFactory, GameState currentState, ThinkingStatus thinkingStatus) {
 		super(queue);
 		
 		this.currentState=currentState;
 		this.strategy=strategyFactory.selectStrategy(currentState);
+	}
+	
+	public ThinkingThread(WaitingQueue queue, StrategyFactory strategyFactory, GameState currentState) {
+		this(queue, strategyFactory, currentState, null);
 	}
 
 	public GameAction getSelectedAction() {
