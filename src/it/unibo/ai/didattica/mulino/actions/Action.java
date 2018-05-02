@@ -1,4 +1,4 @@
-package mulino.shared;
+package it.unibo.ai.didattica.mulino.actions;
 
 import java.io.Serializable;
 

@@ -5,8 +5,12 @@ import java.util.HashMap;
 import game.general.GameAction;
 import game.general.GameFactory;
 import game.general.GameState;
-import mulino.shared.*;
-import mulino.shared.State.*;
+import it.unibo.ai.didattica.mulino.actions.Action;
+import it.unibo.ai.didattica.mulino.actions.Phase1Action;
+import it.unibo.ai.didattica.mulino.actions.Phase2Action;
+import it.unibo.ai.didattica.mulino.actions.PhaseFinalAction;
+import it.unibo.ai.didattica.mulino.domain.State;
+import it.unibo.ai.didattica.mulino.domain.State.*;
 
 public class MulinoFactory extends GameFactory<State,Action> {
 

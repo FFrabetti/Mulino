@@ -1,7 +1,7 @@
 package mulino;
 
 import game.general.GameState;
-import mulino.shared.State.Checker;
+import it.unibo.ai.didattica.mulino.domain.State.Checker;
 
 public class Phase1MulinoAction extends MulinoAction {
 	

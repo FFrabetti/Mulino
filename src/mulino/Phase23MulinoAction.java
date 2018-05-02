@@ -1,7 +1,7 @@
 package mulino;
 
 import game.general.GameState;
-import mulino.shared.State;
+import it.unibo.ai.didattica.mulino.domain.State;
 
 public class Phase23MulinoAction extends MulinoAction {
 

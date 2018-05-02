@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import game.general.GameAction;
-import mulino.shared.State.Checker;
-import mulino.shared.State.Phase;
+import it.unibo.ai.didattica.mulino.domain.State.Checker;
+import it.unibo.ai.didattica.mulino.domain.State.Phase;
 
 public class MulinoPhaseFactory {
 
@@ -48,6 +48,37 @@ public class MulinoPhaseFactory {
 			this.phase = Phase.FIRST;
 		}
 
+//		@Override
+//		public List<GameAction> legitActions(MulinoState ms) {
+//			List<GameAction> actions = new ArrayList<GameAction>();
+//			boolean spottedEnemies = false;
+//			List<int[]> enemyPositions = new ArrayList<int[]>();
+//			HashMap<int[], Checker> board = ms.getBoard();
+//
+//			for (int[] xy : board.keySet()) {
+//				// guardo tutte le posizioni vuote
+//				if (board.get(xy).equalsChecker('O')) {
+//					// controllo se faccio un mulino
+//					if (ms.thereIsMulino(xy, ms.getDutyPlayer()) == true) {
+//						System.out.println("DEBUG:C'è un mulino!!!");
+//						// se non ho ancora controllato le posizioni nemiche lo faccio
+//						if (!spottedEnemies) {
+//							enemyPositions = ms.findEnemies(); // TODO
+//							// tutte le pedine "cattive" sono state rilevate
+//							spottedEnemies = true;
+//						}
+//						// genero una nuova MulinoAction per ogni possibile pedina nemica rimovibile
+//						for (int[] position : enemyPositions) {
+//							actions.add(new Phase1MulinoAction(xy, position));
+//						}
+//					} else {
+//						actions.add(new Phase1MulinoAction(xy));
+//					}
+//				}
+//			}
+//			return actions;
+//		}
+		
 		@Override
 		public List<GameAction> legitActions(MulinoState ms) {
 			List<GameAction> actions = new ArrayList<GameAction>();
@@ -57,7 +88,7 @@ public class MulinoPhaseFactory {
 
 			for (int[] xy : board.keySet()) {
 				// guardo tutte le posizioni vuote
-				if (board.get(xy).equalsChecker('O')) {
+				if (get(xy[0],xy[1],ms).equalsChecker('O')) {
 					// controllo se faccio un mulino
 					if (ms.thereIsMulino(xy, ms.getDutyPlayer()) == true) {
 						// se non ho ancora controllato le posizioni nemiche lo faccio
@@ -86,6 +117,45 @@ public class MulinoPhaseFactory {
 			this.phase = Phase.SECOND;
 		}
 
+//		@Override
+//		public List<GameAction> legitActions(MulinoState ms) {
+//			List<GameAction> actions = new ArrayList<GameAction>();
+//			boolean spottedEnemies = false;
+//			List<int[]> enemyPositions = new ArrayList<int[]>();
+//			HashMap<int[], Checker> board = ms.getBoard();
+//
+//			for (int[] from : board.keySet()) {
+//				// controllo casella partenza ed arrivo
+//				if (board.get(from) == ms.getDutyPlayer()) {
+//					for (int[] to : board.keySet()) {
+//						// controllo che la casella sia libera ed adiacente a quella di partenza
+//						if (board.get(to).equalsChecker('O') && ((to[0] == from[0] && Math.abs(to[1] - from[1]) == 1)
+//								|| (to[1] == from[1] && Math.abs(to[0] - from[0]) == 1))) {
+//							// controllo se faccio un mulino
+//							if (ms.thereIsMulino(to, ms.getDutyPlayer()) == true) {
+//								if (!spottedEnemies) {
+//									enemyPositions = ms.findEnemies(); // TODO
+//									// tutte le pedine "cattive" sono state rilevate
+//									spottedEnemies = true;
+//								}
+//								// genero una nuova MulinoAction per ogni possibile pedina nemica rimovibile
+//								for (int[] position : enemyPositions) {
+//									Phase23MulinoAction a = new Phase23MulinoAction(from, to, position);
+//									a.setPhase(Phase.SECOND);
+//									actions.add(a);
+//								}
+//							} else {
+//								Phase23MulinoAction a = new Phase23MulinoAction(from, to);
+//								a.setPhase(Phase.SECOND);
+//								actions.add(a);
+//							}
+//						}
+//					}
+//				}
+//			}
+//			return actions;
+//		}
+		
 		@Override
 		public List<GameAction> legitActions(MulinoState ms) {
 			List<GameAction> actions = new ArrayList<GameAction>();
@@ -95,10 +165,10 @@ public class MulinoPhaseFactory {
 
 			for (int[] from : board.keySet()) {
 				// controllo casella partenza ed arrivo
-				if (board.get(from) == ms.getDutyPlayer()) {
+				if (get(from[0],from[1],ms) == ms.getDutyPlayer()) {
 					for (int[] to : board.keySet()) {
 						// controllo che la casella sia libera ed adiacente a quella di partenza
-						if (board.get(to).equalsChecker('O') && ((to[0] == from[0] && Math.abs(to[1] - from[1]) == 1)
+						if (get(to[0],to[1],ms).equalsChecker('O') && ((to[0] == from[0] && Math.abs(to[1] - from[1]) == 1)
 								|| (to[1] == from[1] && Math.abs(to[0] - from[0]) == 1))) {
 							// controllo se faccio un mulino
 							if (ms.thereIsMulino(to, ms.getDutyPlayer()) == true) {
@@ -134,6 +204,43 @@ public class MulinoPhaseFactory {
 			this.phase = Phase.FINAL;
 		}
 
+//		@Override
+//		public List<GameAction> legitActions(MulinoState ms) {
+//			List<GameAction> actions = new ArrayList<GameAction>();
+//			boolean spottedEnemies = false;
+//			List<int[]> enemyPositions = new ArrayList<int[]>();
+//			HashMap<int[], Checker> board = ms.getBoard();
+//
+//			for (int[] from : board.keySet()) {
+//				// controllo casella partenza ed arrivo
+//				if (board.get(from) == ms.getDutyPlayer()) {
+//					for (int[] to : board.keySet()) {
+//						if (board.get(to).equalsChecker('O')) {
+//							// controllo se faccio un mulino
+//							if (ms.thereIsMulino(to, ms.getDutyPlayer()) == true) {
+//								if (!spottedEnemies) {
+//									enemyPositions = ms.findEnemies();
+//									// tutte le pedine "cattive" sono state rilevate
+//									spottedEnemies = true;
+//								}
+//								// genero una nuova MulinoAction per ogni possibile pedina nemica rimovibile
+//								for (int[] position : enemyPositions) {
+//									Phase23MulinoAction a = new Phase23MulinoAction(from, to, position);
+//									a.setPhase(Phase.FINAL);
+//									actions.add(a);
+//								}
+//							} else {
+//								Phase23MulinoAction a = new Phase23MulinoAction(from, to);
+//								a.setPhase(Phase.FINAL);
+//								actions.add(a);
+//							}
+//						}
+//					}
+//				}
+//			}
+//			return actions;
+//		}
+		
 		@Override
 		public List<GameAction> legitActions(MulinoState ms) {
 			List<GameAction> actions = new ArrayList<GameAction>();
@@ -143,9 +250,9 @@ public class MulinoPhaseFactory {
 
 			for (int[] from : board.keySet()) {
 				// controllo casella partenza ed arrivo
-				if (board.get(from) == ms.getDutyPlayer()) {
+				if (get(from[0],from[1],ms) == ms.getDutyPlayer()) {
 					for (int[] to : board.keySet()) {
-						if (board.get(to).equalsChecker('O')) {
+						if (get(to[0],to[1],ms).equalsChecker('O')) {
 							// controllo se faccio un mulino
 							if (ms.thereIsMulino(to, ms.getDutyPlayer()) == true) {
 								if (!spottedEnemies) {
@@ -170,5 +277,15 @@ public class MulinoPhaseFactory {
 			}
 			return actions;
 		}
+	}
+	
+	private Checker get(int x,int y,MulinoState ms) {
+		
+		for(int[] i : ms.getBoard().keySet()) {
+			if(i[0]==x && i[1]==y) {
+				return ms.getBoard().get(i);
+			}
+		}
+		return null;
 	}
 }

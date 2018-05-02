@@ -21,6 +21,9 @@ class ServerThread extends Thread{
 			System.out.println("Ricevuto " +received);
 			Object toSend= "Message from server";
 			out.writeObject(toSend);
+			received=(String)in.readObject();
+			System.out.println("Ricevuto "+received);
+			//in.readObject();
 		}
 		catch (Exception e) {
 			System.out.println("ERRORE: "+e);

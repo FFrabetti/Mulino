@@ -1,10 +1,15 @@
 package game.mind;
 
+import java.util.HashMap;
+
 import game.general.GameAction;
 import game.general.GameServer;
 import game.general.GameState;
 import game.general.Timer;
+import it.unibo.ai.didattica.mulino.domain.State.Checker;
+import mulino.MulinoAction;
 import mulino.MulinoSettings;
+import mulino.MulinoState;
 
 public abstract class Mind {
 
@@ -14,7 +19,7 @@ public abstract class Mind {
 	// state pattern: internal mind state
 	private StateFactory mindStates;
 	private MindState state;
-	private ThinkingStatus thinkingStatus;
+	private ThinkingStatus thinkingStatus=null;
 	
 	private GameState gameState;
 	
@@ -83,7 +88,8 @@ public abstract class Mind {
 		@Override
 		public void handle() {
 			// set the initial state of the game (received from the server)
-			setGameState(server.getCurrentState()); // wait...
+			GameState gs=server.getInitState();
+			setGameState(gs); // wait...
 		}
 
 		@Override
@@ -103,6 +109,7 @@ public abstract class Mind {
 		// return -> mind stateChanged
 		@Override
 		public void handle() {
+			System.out.println("--------------------------------------------\nStato di play");
 			WaitingQueue queue = new WaitingQueue();
 			
 			Timer timer = new Timer(queue, MulinoSettings.TIMER);
@@ -116,10 +123,9 @@ public abstract class Mind {
 
 				thinkingThr.interrupt(); // javadoc: "Interrupting a thread that is not alive need not have any effect."
 				timer.interrupt();
-				
 				GameAction action = thinkingThr.getSelectedAction();
+				printInfo(action);
 				server.playAction(action);
-				
 				setGameState(action.perform(gameState));
 			} catch (InterruptedException e) {
 				e.printStackTrace();
@@ -142,11 +148,22 @@ public abstract class Mind {
 		// return -> mind stateChanged
 		@Override
 		public void handle() {
+			System.out.println("--------------------------------------------\nStato di wait");
 			WaitingThread waitingThr = new WaitingThread(strategyFactory, gameState);
 			waitingThr.start();
 			
-			GameState gameState = server.getCurrentState(); 	// waiting...
+			GameState gameState;
+			if(thinkingStatus==null && getGamePosition()==2) {
+				System.out.println("DEBUG:1 lettura");
+				gameState=server.getInitState();
+			}
+			else {
+				System.out.println("DEBUG:2 letture");
+				gameState = server.getCurrentState(); 
+			}
+			// waiting...
 			
+			printInfo(gameState);
 			waitingThr.interrupt();
 			thinkingStatus = waitingThr.getThinkingStatus();
 			
@@ -172,5 +189,23 @@ public abstract class Mind {
 			return null;
 		}
 	}
+	
+	//Per DEBUG
+	private void printInfo(GameState gameState) {
+		MulinoState state = (MulinoState) gameState;
+		HashMap<int[], Checker> board = state.getBoard();
+		System.out.println("Stato ricevuto:");
+		for(int[] i : board.keySet()) {
+			System.out.println(i[0]+","+i[1]+": "+board.get(i));
+		}
+	}
+	
+	private void printInfo(GameAction gameAction) {
+		MulinoAction action=(MulinoAction) gameAction;
+		System.out.println("Azione: "+action.getTo()[0]+","+action.getTo()[1]);
+				if (action.getRemoveOpponent().isPresent())
+					System.out.print(" rimovendo "+action.getRemoveOpponent().get()[0]+","+action.getRemoveOpponent().get()[1]);
+	}
+	
 
 }

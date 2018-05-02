@@ -2,7 +2,7 @@ package mulino;
 
 import game.mind.Mind;
 import game.mind.StrategyFactory;
-import mulino.shared.State;
+import it.unibo.ai.didattica.mulino.domain.State;
 
 public class MulinoMind extends Mind {
 	

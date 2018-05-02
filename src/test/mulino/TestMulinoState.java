@@ -1,9 +1,9 @@
 package test.mulino;
 
 import game.general.GameState;
+import it.unibo.ai.didattica.mulino.domain.State;
 import mulino.MulinoFactory;
 import mulino.MulinoState;
-import mulino.shared.*;
 
 public class TestMulinoState {
 

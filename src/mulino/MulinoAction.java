@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import game.general.GameAction;
 import game.general.GameState;
-import mulino.shared.State.Checker;
+import it.unibo.ai.didattica.mulino.domain.State.Checker;
 
 public abstract class MulinoAction extends GameAction {
 

@@ -21,8 +21,12 @@ public class Diplomat {
 		this.port=port;
 		
 		playerSocket = new Socket(ip, port);
-		in = new ObjectInputStream(new BufferedInputStream(playerSocket.getInputStream()));
 		out = new ObjectOutputStream(playerSocket.getOutputStream());
+		in = new ObjectInputStream(new BufferedInputStream(playerSocket.getInputStream()));
+	}
+	
+	public Socket getSocket() {
+		return playerSocket;
 	}
 	
 	public Diplomat(String ip) throws IOException {

@@ -3,7 +3,7 @@ package mulino;
 import java.util.List;
 
 import game.general.GameAction;
-import mulino.shared.State.Phase;
+import it.unibo.ai.didattica.mulino.domain.State.Phase;
 
 public abstract class MulinoPhase {
 	protected Phase phase;

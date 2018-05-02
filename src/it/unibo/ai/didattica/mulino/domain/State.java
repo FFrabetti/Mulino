@@ -1,4 +1,4 @@
-package mulino.shared;
+package it.unibo.ai.didattica.mulino.domain;
 
 import java.io.Serializable;
 import java.util.HashMap;

@@ -6,8 +6,8 @@ import java.util.List;
 
 import game.general.GameAction;
 import game.general.GameState;
-import mulino.shared.State.Checker;
-import mulino.shared.State.Phase;
+import it.unibo.ai.didattica.mulino.domain.State.Checker;
+import it.unibo.ai.didattica.mulino.domain.State.Phase;
 
 public class MulinoState extends GameState {
 
@@ -66,66 +66,151 @@ public class MulinoState extends GameState {
 		return result;
 	}
 
+//	// mi dice se la pedina in "xy" è parte di un mulino del colore "checker"
+//	public boolean thereIsMulino(int[] xy, Checker checker) {
+//		int x = xy[0];
+//		int y = xy[1];
+//		int pedine = 0;
+//		int i;
+//		System.out.println("DEBUG:Controllo "+xy[0]+","+xy[1]+ " del colore " + checker.name());
+//		System.out.println("Board: casella contiene "+ board.get(new int[] { x, y }));
+//		if (x != 0 && y != 0) {
+//			// controllo la riga
+//			if (board.get(new int[] { -x, y }) == checker && board.get(new int[] { 0, y }) == checker) {
+//				System.out.println("CASO1");
+//				return true;
+//			}
+//			// controllo la colonna
+//			if (board.get(new int[] { x, -y }) == checker && board.get(new int[] { x, 0 }) == checker) {
+//				System.out.println("CASO2");
+//				return true;
+//			}
+//		} else if (x == 0) {
+//			// controllo la riga
+//			if (board.get(new int[] { y, y }) == checker && board.get(new int[] { -y, y }) == checker) {
+//				System.out.println("CASO3");
+//				return true;
+//			}
+//			// controllo la mezza colonna
+//			if (y < 0) {
+//				for (i = -1; i <= -3; i--) {
+//					if (i != y && board.get(new int[] { 0, i }) == checker) {
+//						System.out.println("CASO4");
+//						pedine++;
+//					}
+//				}
+//			} else {
+//				for (i = 1; i <= 3; i++) {
+//					if (i != y && board.get(new int[] { 0, i }) == checker) {
+//						System.out.println("CASO5");
+//						pedine++;
+//					}
+//				}
+//			}
+//			// se ci sono esattamente 2 pedine oltre a quella in esame -> mulino!
+//			if (pedine == 2) {
+//				System.out.println("CASO6");
+//				return true;
+//			}
+//		} else if (y == 0) {
+//			// controllo la colonna
+//			if (board.get(new int[] { x, x }) == checker && board.get(new int[] { x, -x }) == checker) {
+//				System.out.println("CASO7");
+//				return true;
+//			}
+//			// controllo la mezza riga
+//			if (x < 0) {
+//				for (i = -1; i <= -3; i--) {
+//					if (i != x && board.get(new int[] { i, 0 }) == checker) {
+//						System.out.println("CASO8");
+//						pedine++;
+//					}
+//				}
+//			} else {
+//				for (i = 1; i <= 3; i++) {
+//					if (i != x && board.get(new int[] { i, 0 }) == checker) {
+//						System.out.println("CASO9");
+//						pedine++;
+//
+//					}
+//				}
+//			}
+//			// se ci sono esattamente 2 pedine oltre a quella in esame -> mulino!
+//			if (pedine == 2) {
+//				System.out.println("CASO10");
+//				return true;
+//			}
+//		}
+//		System.out.println("CASO11");
+//		return false;
+//	}
+	
+	
 	// mi dice se la pedina in "xy" è parte di un mulino del colore "checker"
-	public boolean thereIsMulino(int[] xy, Checker checker) {
-		int x = xy[0];
-		int y = xy[1];
-		int pedine = 0;
-		int i;
-		if (x != 0 && y != 0) {
-			// controllo la riga
-			if (board.get(new int[] { -x, y }) == checker && board.get(new int[] { 0, y }) == checker) {
-				return true;
-			}
-			// controllo la colonna
-			if (board.get(new int[] { x, -y }) == checker && board.get(new int[] { x, 0 }) == checker) {
-				return true;
-			}
-		} else if (x == 0) {
-			// controllo la riga
-			if (board.get(new int[] { y, y }) == checker && board.get(new int[] { -y, y }) == checker) {
-				return true;
-			}
-			// controllo la mezza colonna
-			if (y < 0) {
-				for (i = -1; i <= -3; i--) {
-					if (i != y && board.get(new int[] { 0, i }) == checker)
-						pedine++;
+		public boolean thereIsMulino(int[] xy, Checker checker) {
+			int x = xy[0];
+			int y = xy[1];
+			int pedine = 0;
+			int i;
+			if (x != 0 && y != 0) {
+				// controllo la riga
+				if (get(-x, y ) == checker && get(0, y ) == checker) {
+					return true;
 				}
-			} else {
-				for (i = 1; i <= 3; i++) {
-					if (i != y && board.get(new int[] { 0, i }) == checker)
-						pedine++;
+				// controllo la colonna
+				if (get( x, -y ) == checker && get(x, 0 ) == checker) {
+					return true;
+				}
+			} else if (x == 0) {
+				// controllo la riga
+				if (get(y, y ) == checker && get(-y, y ) == checker) {
+					return true;
+				}
+				// controllo la mezza colonna
+				if (y < 0) {
+					for (i = -1; i <= -3; i--) {
+						if (i != y && get( 0, i ) == checker) {
+							pedine++;
+						}
+					}
+				} else {
+					for (i = 1; i <= 3; i++) {
+						if (i != y && get(0, i ) == checker) {
+							pedine++;
+						}
+					}
+				}
+				// se ci sono esattamente 2 pedine oltre a quella in esame -> mulino!
+				if (pedine == 2) {
+					return true;
+				}
+			} else if (y == 0) {
+				// controllo la colonna
+				if (get(x, x ) == checker && get( x, -x ) == checker) {
+					return true;
+				}
+				// controllo la mezza riga
+				if (x < 0) {
+					for (i = -1; i <= -3; i--) {
+						if (i != x && get( i, 0 ) == checker) {
+							pedine++;
+						}
+					}
+				} else {
+					for (i = 1; i <= 3; i++) {
+						if (i != x && get(i, 0 ) == checker) {
+							pedine++;
+
+						}
+					}
+				}
+				// se ci sono esattamente 2 pedine oltre a quella in esame -> mulino!
+				if (pedine == 2) {
+					return true;
 				}
 			}
-			// se ci sono esattamente 2 pedine oltre a quella in esame -> mulino!
-			if (pedine == 2) {
-				return true;
-			}
-		} else if (y == 0) {
-			// controllo la colonna
-			if (board.get(new int[] { x, x }) == checker && board.get(new int[] { x, -x }) == checker) {
-				return true;
-			}
-			// controllo la mezza riga
-			if (x < 0) {
-				for (i = -1; i <= -3; i--) {
-					if (i != x && board.get(new int[] { i, 0 }) == checker)
-						pedine++;
-				}
-			} else {
-				for (i = 1; i <= 3; i++) {
-					if (i != x && board.get(new int[] { i, 0 }) == checker)
-						pedine++;
-				}
-			}
-			// se ci sono esattamente 2 pedine oltre a quella in esame -> mulino!
-			if (pedine == 2) {
-				return true;
-			}
+			return false;
 		}
-		return false;
-	}
 
 	// per fase 1
 	public void newCheckerPlayed(int[] to, Checker player) {
@@ -272,7 +357,7 @@ public class MulinoState extends GameState {
 	}
 	
 	private void setCheckersOnBoard(Checker player, int n) {
-		checkers[player.ordinal() - 1] = n;
+		checkersOnBoard[player.ordinal() - 1] = n;
 	}
 	
 	private int[] getCheckers() {
@@ -289,5 +374,14 @@ public class MulinoState extends GameState {
 	
 	private void setCheckersOnBoard(int[] checkersOnBoard) {
 		this.checkersOnBoard = checkersOnBoard;
+	}
+	
+	private Checker get(int x,int y) {
+		for(int[] i : board.keySet()) {
+			if(i[0]==x && i[1]==y) {
+				return board.get(i);
+			}
+		}
+		return null;
 	}
 }

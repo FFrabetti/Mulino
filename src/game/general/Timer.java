@@ -21,7 +21,8 @@ public class Timer extends AlertingThread {
 				Thread.sleep(1000);
 			}
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			System.out.println("Mossa eseguita: timer fermato");
 		}
 		
 		alert(); // waking up the mind
