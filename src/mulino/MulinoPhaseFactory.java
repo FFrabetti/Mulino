@@ -57,7 +57,7 @@ public class MulinoPhaseFactory {
 //
 //			for (int[] xy : board.keySet()) {
 //				// guardo tutte le posizioni vuote
-//				if (board.get(xy).equalsChecker('O')) {
+//				if (board.get(xy) == Checker.EMPTY) {
 //					// controllo se faccio un mulino
 //					if (ms.thereIsMulino(xy, ms.getDutyPlayer()) == true) {
 //						System.out.println("DEBUG:C'è un mulino!!!");
@@ -88,7 +88,7 @@ public class MulinoPhaseFactory {
 
 			for (int[] xy : board.keySet()) {
 				// guardo tutte le posizioni vuote
-				if (get(xy[0],xy[1],ms).equalsChecker('O')) {
+				if (get(xy[0],xy[1],ms) == Checker.EMPTY) {
 					// controllo se faccio un mulino
 					if (ms.thereIsMulino(xy, ms.getDutyPlayer()) == true) {
 						// se non ho ancora controllato le posizioni nemiche lo faccio
@@ -129,7 +129,7 @@ public class MulinoPhaseFactory {
 //				if (board.get(from) == ms.getDutyPlayer()) {
 //					for (int[] to : board.keySet()) {
 //						// controllo che la casella sia libera ed adiacente a quella di partenza
-//						if (board.get(to).equalsChecker('O') && ((to[0] == from[0] && Math.abs(to[1] - from[1]) == 1)
+//						if (board.get(to) == Checker.EMPTY && ((to[0] == from[0] && Math.abs(to[1] - from[1]) == 1)
 //								|| (to[1] == from[1] && Math.abs(to[0] - from[0]) == 1))) {
 //							// controllo se faccio un mulino
 //							if (ms.thereIsMulino(to, ms.getDutyPlayer()) == true) {
@@ -168,7 +168,7 @@ public class MulinoPhaseFactory {
 				if (get(from[0],from[1],ms) == ms.getDutyPlayer()) {
 					for (int[] to : board.keySet()) {
 						// controllo che la casella sia libera ed adiacente a quella di partenza
-						if (get(to[0],to[1],ms).equalsChecker('O') && ((to[0] == from[0] && Math.abs(to[1] - from[1]) == 1)
+						if (get(to[0],to[1],ms) == Checker.EMPTY && ((to[0] == from[0] && Math.abs(to[1] - from[1]) == 1)
 								|| (to[1] == from[1] && Math.abs(to[0] - from[0]) == 1))) {
 							// controllo se faccio un mulino
 							if (ms.thereIsMulino(to, ms.getDutyPlayer()) == true) {
@@ -215,7 +215,7 @@ public class MulinoPhaseFactory {
 //				// controllo casella partenza ed arrivo
 //				if (board.get(from) == ms.getDutyPlayer()) {
 //					for (int[] to : board.keySet()) {
-//						if (board.get(to).equalsChecker('O')) {
+//						if (board.get(to) == Checker.EMPTY) {
 //							// controllo se faccio un mulino
 //							if (ms.thereIsMulino(to, ms.getDutyPlayer()) == true) {
 //								if (!spottedEnemies) {
@@ -252,7 +252,7 @@ public class MulinoPhaseFactory {
 				// controllo casella partenza ed arrivo
 				if (get(from[0],from[1],ms) == ms.getDutyPlayer()) {
 					for (int[] to : board.keySet()) {
-						if (get(to[0],to[1],ms).equalsChecker('O')) {
+						if (get(to[0],to[1],ms) == Checker.EMPTY) {
 							// controllo se faccio un mulino
 							if (ms.thereIsMulino(to, ms.getDutyPlayer()) == true) {
 								if (!spottedEnemies) {
