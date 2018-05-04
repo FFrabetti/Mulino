@@ -44,7 +44,6 @@ public class MulinoTCPServer implements GameServer {
 	@Override
 	public GameState getCurrentState() { // waiting...
 		try {
-			diplomat.read(); // game state after our own move
 			State state = (State) diplomat.read(); // after opponent move
 			System.out.println("DEBUG:fatte 2 letture");
 
@@ -61,16 +60,10 @@ public class MulinoTCPServer implements GameServer {
 	//TODO da fare meglio: è molto simile alla getCurrentState ma con una sola lettura
 	@Override
 	public GameState getInitState() { 
-		try {
-			State state = (State) diplomat.read();
-			// conversion
-			MulinoState ms = (MulinoState) factory.fromState(state);
-			ms.setDutyPlayer(checker); // it's our turn to play
-			return ms;
-			
-		} catch (Exception e) {
-			throw new MulinoServerException(e);
-		}
+		GameState gameState = getCurrentState();
+		((MulinoState)gameState).setDutyPlayer(Checker.WHITE);
+		
+		return gameState;
 	}
 
 }

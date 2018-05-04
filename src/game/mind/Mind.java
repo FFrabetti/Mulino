@@ -88,8 +88,7 @@ public abstract class Mind {
 		@Override
 		public void handle() {
 			// set the initial state of the game (received from the server)
-			GameState gs=server.getInitState();
-			setGameState(gs); // wait...
+			setGameState(server.getInitState()); // wait...
 		}
 
 		@Override
@@ -127,6 +126,8 @@ public abstract class Mind {
 				printInfo(action);
 				server.playAction(action);
 				setGameState(action.perform(gameState));
+				
+				server.getCurrentState(); // after my own move
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -152,16 +153,7 @@ public abstract class Mind {
 			WaitingThread waitingThr = new WaitingThread(strategyFactory, gameState);
 			waitingThr.start();
 			
-			GameState gameState;
-			if(thinkingStatus==null && getGamePosition()==2) {
-				System.out.println("DEBUG:1 lettura");
-				gameState=server.getInitState();
-			}
-			else {
-				System.out.println("DEBUG:2 letture");
-				gameState = server.getCurrentState(); 
-			}
-			// waiting...
+			GameState gameState = server.getCurrentState(); // waiting...
 			
 			printInfo(gameState);
 			waitingThr.interrupt();
