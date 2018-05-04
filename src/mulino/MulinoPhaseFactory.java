@@ -131,8 +131,10 @@ public class MulinoPhaseFactory {
 //						// controllo che la casella sia libera ed adiacente a quella di partenza
 //						if (board.get(to) == Checker.EMPTY && ((to[0] == from[0] && Math.abs(to[1] - from[1]) == 1)
 //								|| (to[1] == from[1] && Math.abs(to[0] - from[0]) == 1))) {
+//							Phase23MulinoAction tempAction = new Phase23MulinoAction(from, to);
+//							MulinoState tempState = (MulinoState)tempAction.perform(ms);
 //							// controllo se faccio un mulino
-//							if (ms.thereIsMulino(to, ms.getDutyPlayer()) == true) {
+//							if (tempState.thereIsMulino(to, ms.getDutyPlayer()) == true) {
 //								if (!spottedEnemies) {
 //									enemyPositions = ms.findEnemies(); // TODO
 //									// tutte le pedine "cattive" sono state rilevate
@@ -170,10 +172,13 @@ public class MulinoPhaseFactory {
 						// controllo che la casella sia libera ed adiacente a quella di partenza
 						if (get(to[0],to[1],ms) == Checker.EMPTY && ((to[0] == from[0] && Math.abs(to[1] - from[1]) == 1)
 								|| (to[1] == from[1] && Math.abs(to[0] - from[0]) == 1))) {
+							
+							Phase23MulinoAction tempAction = new Phase23MulinoAction(from, to);
+							MulinoState tempState = (MulinoState)tempAction.perform(ms);
 							// controllo se faccio un mulino
-							if (ms.thereIsMulino(to, ms.getDutyPlayer()) == true) {
+							if (tempState.thereIsMulino(to, ms.getDutyPlayer()) == true) {
 								if (!spottedEnemies) {
-									enemyPositions = ms.findEnemies(); // TODO
+									enemyPositions = ms.findEnemies();
 									// tutte le pedine "cattive" sono state rilevate
 									spottedEnemies = true;
 								}
@@ -197,7 +202,7 @@ public class MulinoPhaseFactory {
 
 	}
 
-	private class MulinoPhase3 extends MulinoPhase {
+	private class MulinoPhase3 extends MulinoPhase2 {
 
 		public MulinoPhase3() {
 			// super();
@@ -216,8 +221,10 @@ public class MulinoPhaseFactory {
 //				if (board.get(from) == ms.getDutyPlayer()) {
 //					for (int[] to : board.keySet()) {
 //						if (board.get(to) == Checker.EMPTY) {
+//							Phase23MulinoAction tempAction = new Phase23MulinoAction(from, to);
+//							MulinoState tempState = (MulinoState)tempAction.perform(ms);
 //							// controllo se faccio un mulino
-//							if (ms.thereIsMulino(to, ms.getDutyPlayer()) == true) {
+//							if (tempState.thereIsMulino(to, ms.getDutyPlayer()) == true) {
 //								if (!spottedEnemies) {
 //									enemyPositions = ms.findEnemies();
 //									// tutte le pedine "cattive" sono state rilevate
@@ -243,6 +250,10 @@ public class MulinoPhaseFactory {
 		
 		@Override
 		public List<GameAction> legitActions(MulinoState ms) {
+			// il mio avversiario ha 3 pedine, ma io ancora no
+			if(ms.getCheckersOnBoard(ms.getDutyPlayer()) > 3) {
+				return super.legitActions(ms);
+			}
 			List<GameAction> actions = new ArrayList<GameAction>();
 			boolean spottedEnemies = false;
 			List<int[]> enemyPositions = new ArrayList<int[]>();
@@ -253,8 +264,10 @@ public class MulinoPhaseFactory {
 				if (get(from[0],from[1],ms) == ms.getDutyPlayer()) {
 					for (int[] to : board.keySet()) {
 						if (get(to[0],to[1],ms) == Checker.EMPTY) {
+							Phase23MulinoAction tempAction = new Phase23MulinoAction(from, to);
+							MulinoState tempState = (MulinoState)tempAction.perform(ms);
 							// controllo se faccio un mulino
-							if (ms.thereIsMulino(to, ms.getDutyPlayer()) == true) {
+							if (tempState.thereIsMulino(to, ms.getDutyPlayer()) == true) {
 								if (!spottedEnemies) {
 									enemyPositions = ms.findEnemies();
 									// tutte le pedine "cattive" sono state rilevate

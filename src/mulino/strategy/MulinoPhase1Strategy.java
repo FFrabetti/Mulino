@@ -17,6 +17,12 @@ public class MulinoPhase1Strategy extends Strategy {
 	
 		MulinoState ms=(MulinoState)state;
 		int rnd = new Random().nextInt(ms.legitActions().size());
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		Phase1MulinoAction action=(Phase1MulinoAction)ms.legitActions().get(rnd);
 		if(action.getRemoveOpponent().isPresent()) {
 			System.out.println("DEBUG:Mossa rimuove: "+action.getRemoveOpponent().get()[0]+","+action.getRemoveOpponent().get()[1]);

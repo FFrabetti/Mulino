@@ -17,9 +17,21 @@ public class MulinoState extends GameState {
 	private int[] checkersOnBoard = new int[] {0, 0};
 	private HashMap<int[], Checker> board = new HashMap<>();
 
+	private void printInfo(GameAction gameAction) {
+		MulinoAction action=(MulinoAction) gameAction;
+		System.out.println("Azione: "+action.getTo()[0]+","+action.getTo()[1]);
+				if (action.getRemoveOpponent().isPresent())
+					System.out.print(" rimovendo "+action.getRemoveOpponent().get()[0]+","+action.getRemoveOpponent().get()[1]);
+	}
+	
 	@Override
 	public List<GameAction> legitActions() {
-		return currentPhase.legitActions(this);
+		List<GameAction> list = currentPhase.legitActions(this);
+		System.out.println("Azioni lecite:");
+		for(GameAction a : list) {
+			printInfo(a);
+		}
+		return list;
 	}
 
 	@Override
@@ -344,35 +356,35 @@ public class MulinoState extends GameState {
 	
 	// long-term utilities
 	// TODONE: metodi fantastici e super efficienti che risolvono pure la fame nel mondo...
-	private int getCheckers(Checker player) {
+	public int getCheckers(Checker player) {
 		return checkers[player.ordinal() - 1];
 	}
 	
-	private void setCheckers(Checker player, int n) {
+	public void setCheckers(Checker player, int n) {
 		checkers[player.ordinal() - 1] = n;
 	}
 	
-	private int getCheckersOnBoard(Checker player) {
+	public int getCheckersOnBoard(Checker player) {
 		return checkersOnBoard[player.ordinal() - 1];
 	}
 	
-	private void setCheckersOnBoard(Checker player, int n) {
+	public void setCheckersOnBoard(Checker player, int n) {
 		checkersOnBoard[player.ordinal() - 1] = n;
 	}
 	
-	private int[] getCheckers() {
+	public int[] getCheckers() {
 		return this.checkers;
 	}
 	
-	private void setCheckers(int[] checkers) {
+	public void setCheckers(int[] checkers) {
 		this.checkers = checkers;
 	}
 	
-	private int[] getCheckersOnBoard() {
+	public int[] getCheckersOnBoard() {
 		return checkersOnBoard;
 	}
 	
-	private void setCheckersOnBoard(int[] checkersOnBoard) {
+	public void setCheckersOnBoard(int[] checkersOnBoard) {
 		this.checkersOnBoard = checkersOnBoard;
 	}
 	
