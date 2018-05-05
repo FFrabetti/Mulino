@@ -210,14 +210,18 @@ public class Board {
 		List<Position> list = new LinkedList<>();
 	
 		if(y==0) { // asse x
-			tryAddList(x+1, 0, list);
-			tryAddList(x-1, 0, list);
+			if(isValidCoordinate(x+1))
+				list.add(new Position(x+1, 0));
+			if(isValidCoordinate(x-1))
+				list.add(new Position(x-1, 0));
 			list.add(new Position(x, x));
 			list.add(new Position(x, -x));
 		}
 		else if(x==0) { // asse y
-			tryAddList(0, y+1, list);
-			tryAddList(0, y-1, list);
+			if(isValidCoordinate(y+1))
+				list.add(new Position(0, y+1));
+			if(isValidCoordinate(y-1))
+				list.add(new Position(0, y-1));
 			list.add(new Position(y, y));
 			list.add(new Position(-y, -y));
 		}
@@ -229,10 +233,15 @@ public class Board {
 		return list;
 	}
 
-	private void tryAddList(int i, int j, List<Position> list) {
-		try {
-			list.add(new Position(i, j));
-		} catch(Exception e) {}
+//	private void tryAddList(int i, int j, List<Position> list) {
+//		try {
+//			list.add(new Position(i, j));
+//		} catch(Exception e) {}
+//	}
+	
+	// sugli assi, verifico la validità della coordinata != 0
+	private boolean isValidCoordinate(int k) {
+		return k!=0 && k<=3 && k>=-3;
 	}
 
 	public List<Position> freeAdiacent(Position p) {

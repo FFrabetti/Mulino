@@ -6,10 +6,10 @@ public class Position {
 	private int y;
 	
 	public Position(int x, int y) {
-		int absX = Math.abs(x);
-		int absY = Math.abs(y);
-		if((x==0 && y==0) || absX>3 || absY>3 || (x*y!=0 && absX!=absY))
-			throw new IllegalArgumentException("Invalid position: " + x + "," + y);
+//		int absX = Math.abs(x);
+//		int absY = Math.abs(y);
+//		if((x==0 && y==0) || absX>3 || absY>3 || (x*y!=0 && absX!=absY))
+//			throw new IllegalArgumentException("Invalid position: " + x + "," + y);
 			
 		this.x = x;
 		this.y = y;
