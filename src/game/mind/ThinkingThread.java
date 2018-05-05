@@ -7,14 +7,13 @@ public class ThinkingThread extends AlertingThread {
 
 	private GameState currentState;
 	private Strategy strategy;
-	private ThinkingStatus thinkingStatus;
 	
 	public ThinkingThread(WaitingQueue queue, StrategyFactory strategyFactory, GameState currentState, ThinkingStatus thinkingStatus) {
 		super(queue);
 		
 		this.currentState=currentState;
 		this.strategy=strategyFactory.selectStrategy(currentState);
-		this.thinkingStatus=thinkingStatus;
+		strategy.setThinkingStatus(thinkingStatus); //to make the strategy begin from a thought already done
 	}
 	
 	public ThinkingThread(WaitingQueue queue, StrategyFactory strategyFactory, GameState currentState) {
@@ -28,7 +27,7 @@ public class ThinkingThread extends AlertingThread {
 	public void run() {
 		Thread t = Thread.currentThread();
 		System.out.println("Thread " + t.getName() + ":ThinkingThread - incomincio a pensare");
-		strategy.setThinkingStatus(thinkingStatus); //to make the strategy begin from a thought already done
+
 		strategy.chooseAction(currentState);
 		
 		alert(); // wakes up the mind

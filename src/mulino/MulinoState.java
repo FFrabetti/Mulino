@@ -43,12 +43,12 @@ public class MulinoState extends GameState {
 
 	// può essere calcolata facilmente -> non devo preoccuparmi di aggiornarla!
 	public Phase getCurrentPhase() {
-		if (board.checkers(Checker.WHITE) == 3 || board.checkers(Checker.BLACK) == 3)
-			return Phase.FINAL;
-		else if (availableCheckers[W] == 0 && availableCheckers[B] == 0)
-			return Phase.SECOND;
-		else
+		if (availableCheckers[W]>0 || availableCheckers[B]>0)
 			return Phase.FIRST;
+		else if (board.checkers(Checker.WHITE) == 3 || board.checkers(Checker.BLACK) == 3)
+			return Phase.FINAL;
+		else
+			return Phase.SECOND;
 	}
 
 	public Checker getDutyPlayer() {
@@ -78,7 +78,8 @@ public class MulinoState extends GameState {
 
 	@Override
 	public boolean isOver() {
-		return board.checkers(Checker.WHITE) < 3 || board.checkers(Checker.BLACK) < 3;
+		return getCurrentPhase()==Phase.FINAL &&
+				(board.checkers(Checker.WHITE) < 3 || board.checkers(Checker.BLACK) < 3);
 	}
 
 	@Override
