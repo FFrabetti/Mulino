@@ -10,14 +10,16 @@ public class MulinoStrategyFactory implements StrategyFactory{
 
 	@Override
 	public Strategy selectStrategy(GameState state) {
-		MulinoState mState = (MulinoState) state;
-		Phase phase =mState.getCurrentPhase();
-		if(phase==Phase.FIRST)
-			return new MulinoPhase1Strategy();
-		else if(phase==Phase.SECOND)
-			return new MulinoPhase2Strategy();
-		else 
-			return new MulinoPhase3Strategy();
+		return new RandomStrategy();
+		
+//		MulinoState mState = (MulinoState) state;
+//		Phase phase = mState.getCurrentPhase();
+//		if(phase==Phase.FIRST)
+//			return new MulinoPhase1Strategy();
+//		else if(phase==Phase.SECOND)
+//			return new MulinoPhase2Strategy();
+//		else 
+//			return new MulinoPhase3Strategy();
 	}
 
 }
