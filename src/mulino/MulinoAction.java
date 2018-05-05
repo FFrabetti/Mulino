@@ -4,19 +4,18 @@ import java.util.Optional;
 
 import game.general.GameAction;
 import game.general.GameState;
-import it.unibo.ai.didattica.mulino.domain.State.Checker;
 
 public abstract class MulinoAction extends GameAction {
 
-	private int[] to;
-	private Optional<int[]> removeOpponent;
+	private Position to;
+	private Optional<Position> removeOpponent;
 	
-	public MulinoAction(int[] to, int[] removeOpponent) {
+	public MulinoAction(Position to, Position removeOpponent) {
 		this.to = to;
 		setRemoveOpponent(removeOpponent);
 	}
 
-	public MulinoAction(int[] to) {
+	public MulinoAction(Position to) {
 		this(to, null);
 	}
 	
@@ -24,40 +23,31 @@ public abstract class MulinoAction extends GameAction {
 		// may be useful, if you want to manually set all fields
 	}
 	
-	public int[] getTo() {
+	public Position getTo() {
 		return to;
 	}
 
-	public void setTo(int[] to) {
+	public void setTo(Position to) {
 		this.to = to;
 	}
 
-	public Optional<int[]> getRemoveOpponent() {
+	public Optional<Position> getRemoveOpponent() {
 		return removeOpponent;
 	}
 
-	public void setRemoveOpponent(int[] removeOpponent) {
+	public void setRemoveOpponent(Position removeOpponent) {
 		this.removeOpponent = Optional.ofNullable(removeOpponent);
-	}
-
-	private Checker opponent(Checker player) {
-		return player==Checker.WHITE ? Checker.BLACK : Checker.WHITE;
 	}
 	
 	// parte comune a tutte le fasi:
-	protected GameState finishToPerform(MulinoState newState, Checker player) {
-		Checker opponent = opponent(player);
-		
+	protected GameState finishToPerform(MulinoState newState) {
 		// se posso (ho fatto un mulino) rimuovo una pedina nemica
 		if (removeOpponent.isPresent())
-			newState.removeChecker(removeOpponent.get(), opponent);
+			newState.removeChecker(removeOpponent.get());
 
 		// adesso toccherà muovere all'avversario
-		newState.setDutyPlayer(opponent);
+		newState.switchDutyPlayer();
 
-		// controllo se devo cambiare fase di gioco
-		newState.updatePhase();
-		
 		return newState;
 	}
 	

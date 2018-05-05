@@ -1,7 +1,6 @@
 package mulino;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import game.general.GameAction;
@@ -9,275 +8,47 @@ import game.general.GameState;
 import it.unibo.ai.didattica.mulino.domain.State.Checker;
 import it.unibo.ai.didattica.mulino.domain.State.Phase;
 
+/*
+ * Refactoring:
+ * - nessuno deve sapere come gestisco lo stato internamente, così posso cambiarlo quando mi pare
+ * - cerco di minimizzare le informazioni, alcune posso calcolarle (se è veloce farlo)
+ */
 public class MulinoState extends GameState {
 
-	private MulinoPhase currentPhase;
+	private static final int W = 0;
+	private static final int B = 1;
+
 	private Checker dutyPlayer;
-	private int[] checkers = new int[] {9, 9};
-	private int[] checkersOnBoard = new int[] {0, 0};
-	private HashMap<int[], Checker> board = new HashMap<>();
+	private int[] availableCheckers; // per fase 1
+	private Board board;
 
-	private void printInfo(GameAction gameAction) {
-		MulinoAction action=(MulinoAction) gameAction;
-		System.out.println("Azione: "+action.getTo()[0]+","+action.getTo()[1]);
-				if (action.getRemoveOpponent().isPresent())
-					System.out.print(" rimovendo "+action.getRemoveOpponent().get()[0]+","+action.getRemoveOpponent().get()[1]);
+	public MulinoState(Board board, int avWCheckers, int avBCheckers) {
+		dutyPlayer = Checker.WHITE;
+		availableCheckers = new int[] { avWCheckers, avBCheckers };
+		this.board = board;
 	}
 	
-	@Override
-	public List<GameAction> legitActions() {
-		List<GameAction> list = currentPhase.legitActions(this);
-		System.out.println("Azioni lecite:");
-		for(GameAction a : list) {
-			printInfo(a);
-		}
-		return list;
+	public MulinoState() {
+		this(new Board(), MulinoSettings.INITIAL_CHECKERS, MulinoSettings.INITIAL_CHECKERS);
 	}
 
-	@Override
-	public boolean isOver() {
-		// TODO
-		return false;
-	}
+	// debug
+	// private void printInfo(GameAction gameAction) {
+	// MulinoAction action=(MulinoAction) gameAction;
+	// System.out.println("Azione: "+action.getTo()[0]+","+action.getTo()[1]);
+	// if (action.getRemoveOpponent().isPresent())
+	// System.out.print(" rimovendo
+	// "+action.getRemoveOpponent().get()[0]+","+action.getRemoveOpponent().get()[1]);
+	// }
 
-	public void updatePhase() {
-		currentPhase = MulinoPhase.getPhase(checkers[0], checkers[1], checkersOnBoard[0], checkersOnBoard[1]);
-	}
-
-	// potrebbe tornarci utile per "memorizzare" gli stati già visitati mentre
-	// ragioniamo sulla prossima mossa
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + checkers[1];
-		result = prime * result + checkersOnBoard[1];
-		result = prime * result + ((board == null) ? 0 : board.hashCode());
-		result = prime * result + ((currentPhase == null) ? 0 : currentPhase.getPhaseName().hashCode());
-		result = prime * result + checkers[0];
-		result = prime * result + checkersOnBoard[0];
-		return result;
-	}
-
-	public MulinoState clone() {
-		// generate the new State
-		MulinoState result = new MulinoState();
-
-		// replicate the current board
-		result.getBoard().putAll(this.getBoard());
-
-		// update the checkers available to the players
-		result.setCheckers(this.getCheckers());
-		result.setCheckersOnBoard(this.getCheckersOnBoard());
-
-		// update the phase
-		result.setCurrentPhase(this.getCurrentPhase());
-
-		// set the same dutyPlayer
-		result.setDutyPlayer(this.getDutyPlayer());
-
-		return result;
-	}
-
-//	// mi dice se la pedina in "xy" è parte di un mulino del colore "checker"
-//	public boolean thereIsMulino(int[] xy, Checker checker) {
-//		int x = xy[0];
-//		int y = xy[1];
-//		int pedine = 0;
-//		int i;
-//		System.out.println("DEBUG:Controllo "+xy[0]+","+xy[1]+ " del colore " + checker.name());
-//		System.out.println("Board: casella contiene "+ board.get(new int[] { x, y }));
-//		if (x != 0 && y != 0) {
-//			// controllo la riga
-//			if (board.get(new int[] { -x, y }) == checker && board.get(new int[] { 0, y }) == checker) {
-//				System.out.println("CASO1");
-//				return true;
-//			}
-//			// controllo la colonna
-//			if (board.get(new int[] { x, -y }) == checker && board.get(new int[] { x, 0 }) == checker) {
-//				System.out.println("CASO2");
-//				return true;
-//			}
-//		} else if (x == 0) {
-//			// controllo la riga
-//			if (board.get(new int[] { y, y }) == checker && board.get(new int[] { -y, y }) == checker) {
-//				System.out.println("CASO3");
-//				return true;
-//			}
-//			// controllo la mezza colonna
-//			if (y < 0) {
-//				for (i = -1; i <= -3; i--) {
-//					if (i != y && board.get(new int[] { 0, i }) == checker) {
-//						System.out.println("CASO4");
-//						pedine++;
-//					}
-//				}
-//			} else {
-//				for (i = 1; i <= 3; i++) {
-//					if (i != y && board.get(new int[] { 0, i }) == checker) {
-//						System.out.println("CASO5");
-//						pedine++;
-//					}
-//				}
-//			}
-//			// se ci sono esattamente 2 pedine oltre a quella in esame -> mulino!
-//			if (pedine == 2) {
-//				System.out.println("CASO6");
-//				return true;
-//			}
-//		} else if (y == 0) {
-//			// controllo la colonna
-//			if (board.get(new int[] { x, x }) == checker && board.get(new int[] { x, -x }) == checker) {
-//				System.out.println("CASO7");
-//				return true;
-//			}
-//			// controllo la mezza riga
-//			if (x < 0) {
-//				for (i = -1; i <= -3; i--) {
-//					if (i != x && board.get(new int[] { i, 0 }) == checker) {
-//						System.out.println("CASO8");
-//						pedine++;
-//					}
-//				}
-//			} else {
-//				for (i = 1; i <= 3; i++) {
-//					if (i != x && board.get(new int[] { i, 0 }) == checker) {
-//						System.out.println("CASO9");
-//						pedine++;
-//
-//					}
-//				}
-//			}
-//			// se ci sono esattamente 2 pedine oltre a quella in esame -> mulino!
-//			if (pedine == 2) {
-//				System.out.println("CASO10");
-//				return true;
-//			}
-//		}
-//		System.out.println("CASO11");
-//		return false;
-//	}
-	
-	
-	// mi dice se la pedina in "xy" è parte di un mulino del colore "checker"
-		public boolean thereIsMulino(int[] xy, Checker checker) {
-			int x = xy[0];
-			int y = xy[1];
-			int pedine = 0;
-			int i;
-			if (x != 0 && y != 0) {
-				// controllo la riga
-				if (get(-x, y ) == checker && get(0, y ) == checker) {
-					return true;
-				}
-				// controllo la colonna
-				if (get( x, -y ) == checker && get(x, 0 ) == checker) {
-					return true;
-				}
-			} else if (x == 0) {
-				// controllo la riga
-				if (get(y, y ) == checker && get(-y, y ) == checker) {
-					return true;
-				}
-				// controllo la mezza colonna
-				if (y < 0) {
-					for (i = -1; i <= -3; i--) {
-						if (i != y && get( 0, i ) == checker) {
-							pedine++;
-						}
-					}
-				} else {
-					for (i = 1; i <= 3; i++) {
-						if (i != y && get(0, i ) == checker) {
-							pedine++;
-						}
-					}
-				}
-				// se ci sono esattamente 2 pedine oltre a quella in esame -> mulino!
-				if (pedine == 2) {
-					return true;
-				}
-			} else if (y == 0) {
-				// controllo la colonna
-				if (get(x, x ) == checker && get( x, -x ) == checker) {
-					return true;
-				}
-				// controllo la mezza riga
-				if (x < 0) {
-					for (i = -1; i <= -3; i--) {
-						if (i != x && get( i, 0 ) == checker) {
-							pedine++;
-						}
-					}
-				} else {
-					for (i = 1; i <= 3; i++) {
-						if (i != x && get(i, 0 ) == checker) {
-							pedine++;
-
-						}
-					}
-				}
-				// se ci sono esattamente 2 pedine oltre a quella in esame -> mulino!
-				if (pedine == 2) {
-					return true;
-				}
-			}
-			return false;
-		}
-
-	// per fase 1
-	public void newCheckerPlayed(int[] to, Checker player) {
-		board.replace(to, player); // aggiungo la pedina
-
-		// aggiorno le pedine ancora da posizionare e quelle in campo
-		setCheckers(player, getCheckers(player) - 1);
-		setCheckersOnBoard(player, getCheckersOnBoard(player) + 1);
-	}
-	
-	// per fase 2 e 3
-	public void moveChecker(int[] from, int[] to) {
-		Checker checker = board.get(from);
-		board.replace(from, Checker.EMPTY);
-		board.replace(to, checker);
-	}
-
-	public void removeChecker(int[] pos, Checker player) {
-		board.replace(pos, Checker.EMPTY);
-
-		setCheckersOnBoard(player, getCheckersOnBoard(player) - 1);
-	}
-
-	// localizza le posizioni di tutte le pedine dell'enemyPlayer sul tabellone
-	public List<int[]> findEnemies() {
-		List<int[]> mulinoEnemies = new ArrayList<int[]>();
-		List<int[]> isolatedEnemies = new ArrayList<int[]>();
-		Checker checker;
-
-		for (int[] xy : board.keySet()) {
-			checker = board.get(xy);
-			if (checker == enemyPlayer()) {
-				if (thereIsMulino(xy, checker)) {
-					mulinoEnemies.add(xy);
-				} else {
-					isolatedEnemies.add(xy);
-				}
-			}
-		}
-
-		return isolatedEnemies.isEmpty() ? mulinoEnemies : isolatedEnemies;
-	}
-
-	// utility
-	private Checker enemyPlayer() {
-		return dutyPlayer == Checker.WHITE ? Checker.BLACK : Checker.WHITE;
-	}
-
-	// getters and setters
-	public HashMap<int[], Checker> getBoard() {
-		return board;
-	}
-
-	public void setBoard(HashMap<int[], Checker> hashMap) {
-		this.board = hashMap;
+	// può essere calcolata facilmente -> non devo preoccuparmi di aggiornarla!
+	public Phase getCurrentPhase() {
+		if (board.checkers(Checker.WHITE) == 3 || board.checkers(Checker.BLACK) == 3)
+			return Phase.FINAL;
+		else if (availableCheckers[W] == 0 && availableCheckers[B] == 0)
+			return Phase.SECOND;
+		else
+			return Phase.FIRST;
 	}
 
 	public Checker getDutyPlayer() {
@@ -288,112 +59,149 @@ public class MulinoState extends GameState {
 		this.dutyPlayer = player;
 	}
 
-	public Phase getCurrentPhase() {
-		return currentPhase.getPhaseName();
+	public void switchDutyPlayer() {
+		dutyPlayer = enemyPlayer();
 	}
-
-	public void setCurrentPhase(Phase phase) {
-		currentPhase = MulinoPhase.getPhase(phase);
-	}
-
-	public int getWhiteCheckers() {
-		return checkers[0];
-	}
-
-	public void setWhiteCheckers(int whiteCheckers) {
-		this.checkers[0] = whiteCheckers;
-	}
-
-	public int getBlackCheckers() {
-		return checkers[1];
-	}
-
-	public void setBlackCheckers(int blackCheckers) {
-		this.checkers[1] = blackCheckers;
-	}
-
-	public int getWhiteCheckersOnBoard() {
-		return checkersOnBoard[0];
-	}
-
-	public void setWhiteCheckersOnBoard(int whiteCheckersOnBoard) {
-		this.checkersOnBoard[0] = whiteCheckersOnBoard;
-	}
-
-	public int getBlackCheckersOnBoard() {
-		return checkersOnBoard[1];
-	}
-
-	public void setBlackCheckersOnBoard(int blackCheckersOnBoard) {
-		this.checkersOnBoard[1] = blackCheckersOnBoard;
-	}
-
-////	 temporary utilities
-////	 TODO: metodi evitabili se NON usassimo "white" e "black" nei NOMI di
-////	 variabili e metodi...
-//
-//	private int getCheckers(Checker player) {
-//		return player == Checker.WHITE ? whiteCheckers : blackCheckers;
-//	}
-//
-//	private void setCheckers(Checker player, int n) {
-//		if (player == Checker.WHITE)
-//			whiteCheckers = n;
-//		else
-//			blackCheckers = n;
-//	}
-//
-//	private int getCheckersOnBoard(Checker player) {
-//		return player == Checker.WHITE ? whiteCheckersOnBoard : blackCheckersOnBoard;
-//	}
-//
-//	private void setCheckersOnBoard(Checker player, int n) {
-//		if (player == Checker.WHITE)
-//			whiteCheckersOnBoard = n;
-//		else
-//			blackCheckersOnBoard = n;
-//	}
 	
-	// long-term utilities
-	// TODONE: metodi fantastici e super efficienti che risolvono pure la fame nel mondo...
+	// metodi fantastici e super efficienti che risolvono pure la fame nel mondo...
 	public int getCheckers(Checker player) {
-		return checkers[player.ordinal() - 1];
+		return availableCheckers[player.ordinal() - 1];
 	}
-	
+
 	public void setCheckers(Checker player, int n) {
-		checkers[player.ordinal() - 1] = n;
+		availableCheckers[player.ordinal() - 1] = n;
 	}
-	
-	public int getCheckersOnBoard(Checker player) {
-		return checkersOnBoard[player.ordinal() - 1];
+
+	private int index(Checker player) {
+		return player.ordinal() - 1;
 	}
-	
-	public void setCheckersOnBoard(Checker player, int n) {
-		checkersOnBoard[player.ordinal() - 1] = n;
+
+	@Override
+	public boolean isOver() {
+		return board.checkers(Checker.WHITE) < 3 || board.checkers(Checker.BLACK) < 3;
 	}
-	
-	public int[] getCheckers() {
-		return this.checkers;
+
+	@Override
+	public int hashCode() {
+		return availableCheckers[W] ^ availableCheckers[B] ^ dutyPlayer.hashCode() ^ board.hashCode();
 	}
-	
-	public void setCheckers(int[] checkers) {
-		this.checkers = checkers;
+
+	@Override
+	public boolean equals(Object o) {
+		if(!(o instanceof MulinoState))
+			return false;
+		
+		MulinoState that = (MulinoState)o;
+		return that.dutyPlayer==this.dutyPlayer &&
+				that.availableCheckers[W]==this.availableCheckers[W] &&
+				that.availableCheckers[B]==this.availableCheckers[B] &&
+				that.board.equals(this.board);
 	}
-	
-	public int[] getCheckersOnBoard() {
-		return checkersOnBoard;
+
+	@Override
+	public MulinoState clone() {
+		MulinoState result = new MulinoState();
+
+		result.board = this.board.clone();
+		result.availableCheckers[W] = this.availableCheckers[W];
+		result.availableCheckers[B] = this.availableCheckers[B];
+		result.dutyPlayer = this.dutyPlayer;
+
+		return result;
 	}
-	
-	public void setCheckersOnBoard(int[] checkersOnBoard) {
-		this.checkersOnBoard = checkersOnBoard;
+
+	// per fase 1
+	public void playChecker(Position to) {
+		board.put(to, dutyPlayer); // aggiungo la pedina
+
+		// aggiorno le pedine ancora da posizionare
+		availableCheckers[index(dutyPlayer)]--;
 	}
-	
-	private Checker get(int x,int y) {
-		for(int[] i : board.keySet()) {
-			if(i[0]==x && i[1]==y) {
-				return board.get(i);
+
+	// per fase 2 e 3
+	public void moveChecker(Position from, Position to) {
+		board.move(from, to);
+	}
+
+	public void removeChecker(Position pos) {
+		board.remove(pos);
+	}
+
+	// utility
+	private Checker enemyPlayer() {
+		return dutyPlayer == Checker.WHITE ? Checker.BLACK : Checker.WHITE;
+	}
+
+	// localizza le posizioni di tutte le pedine dell'enemyPlayer sul tabellone
+	private List<Position> findEnemies() {
+		List<Position> mulinoEnemies = new LinkedList<>();
+		List<Position> isolatedEnemies = new LinkedList<>();
+
+		for (Position p : board.getPositions(enemyPlayer())) {
+			// evito di controllare 2 volte le pedine che so già essere in un mulino
+			if (!mulinoEnemies.contains(p)) {
+				if (board.isInMulino(p, mulinoEnemies)) // inserisce anche le altre pedine nella lista
+					mulinoEnemies.add(p);
+				else
+					isolatedEnemies.add(p);
 			}
+		}
+
+		return isolatedEnemies.isEmpty() ? mulinoEnemies : isolatedEnemies;
+	}
+
+	@Override
+	public List<GameAction> legitActions() {
+		switch (getCurrentPhase()) {
+		case FIRST:
+			return phase1Actions();
+		case SECOND: // same actions
+		case FINAL:
+			return phase23Actions();
 		}
 		return null;
 	}
+
+	private List<GameAction> phase1Actions() {
+		List<GameAction> list = new LinkedList<>();
+		List<Position> removable = new LinkedList<>();
+
+		board.freePositions().forEach(to -> {
+			if (board.withMove(to, dutyPlayer).isInMulino(to)) {
+				board.resetMove(); // undo withMove
+
+				if (removable.isEmpty())
+					removable.addAll(findEnemies());
+
+				removable.forEach(r -> list.add(new Phase1MulinoAction(to, r)));
+			} else
+				list.add(new Phase1MulinoAction(to));
+		});
+
+		return list;
+	}
+
+	private List<GameAction> phase23Actions() {
+		List<GameAction> list = new LinkedList<>();
+		List<Position> removable = new LinkedList<>();
+
+		board.getPositions(dutyPlayer).forEach(from -> {
+			// posso spostarla in un posto adiacente, se libero
+			// oppure in uno libero qualsiasi (se == 3)
+			for (Position to : (board.checkers(dutyPlayer)==3 ? board.freePositions() : board.freeAdiacent(from))) {
+				if (board.withMove(from, to).isInMulino(to)) {
+					board.resetMove(); // undo withMove
+
+					if (removable.isEmpty())
+						removable.addAll(findEnemies());
+
+					removable.forEach(r -> list.add(new Phase23MulinoAction(from, to, r, getCurrentPhase())));
+				} else
+					list.add(new Phase23MulinoAction(from, to, getCurrentPhase()));
+			}
+		});
+
+		return list;
+	}
+
 }
