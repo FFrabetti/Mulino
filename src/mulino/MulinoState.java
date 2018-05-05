@@ -169,8 +169,6 @@ public class MulinoState extends GameState {
 
 		board.freePositions().forEach(to -> {
 			if (board.withMove(to, dutyPlayer).isInMulino(to)) {
-				board.resetMove(); // undo withMove
-
 				if (removable.isEmpty())
 					removable.addAll(findEnemies());
 
@@ -191,8 +189,6 @@ public class MulinoState extends GameState {
 			// oppure in uno libero qualsiasi (se == 3)
 			for (Position to : (board.checkers(dutyPlayer)==3 ? board.freePositions() : board.freeAdiacent(from))) {
 				if (board.withMove(from, to).isInMulino(to)) {
-					board.resetMove(); // undo withMove
-
 					if (removable.isEmpty())
 						removable.addAll(findEnemies());
 
@@ -205,4 +201,9 @@ public class MulinoState extends GameState {
 		return list;
 	}
 
+	@Override
+	public String toString() {
+		return dutyPlayer + " [" + getCurrentPhase() + "] " + board;
+	}
+	
 }

@@ -1,15 +1,10 @@
 package game.mind;
 
-import java.util.HashMap;
-
 import game.general.GameAction;
 import game.general.GameServer;
 import game.general.GameState;
 import game.general.Timer;
-import it.unibo.ai.didattica.mulino.domain.State.Checker;
-import mulino.MulinoAction;
 import mulino.MulinoSettings;
-import mulino.MulinoState;
 
 public abstract class Mind {
 
@@ -123,11 +118,16 @@ public abstract class Mind {
 				thinkingThr.interrupt(); // javadoc: "Interrupting a thread that is not alive need not have any effect."
 				timer.interrupt();
 				GameAction action = thinkingThr.getSelectedAction();
+				
+				// ---------- DEBUG ---------- 
 				printInfo(action);
+				// ---------- DEBUG ----------
+				
 				server.playAction(action);
 				setGameState(action.perform(gameState));
 				
-				server.getCurrentState(); // after my own move
+				 // state after my own move
+				server.getInitState(); // read senza conversione, tanto è uno stato che non uso
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -155,7 +155,10 @@ public abstract class Mind {
 			
 			GameState gameState = server.getCurrentState(); // waiting...
 			
+			// ---------- DEBUG ----------
 			printInfo(gameState);
+			// ---------- DEBUG ----------
+			
 			waitingThr.interrupt();
 			thinkingStatus = waitingThr.getThinkingStatus();
 			
@@ -184,20 +187,11 @@ public abstract class Mind {
 	
 	//Per DEBUG
 	private void printInfo(GameState gameState) {
-		MulinoState state = (MulinoState) gameState;
-		HashMap<int[], Checker> board = state.getBoard();
-		System.out.println("Stato ricevuto:");
-		for(int[] i : board.keySet()) {
-			System.out.println(i[0]+","+i[1]+": "+board.get(i));
-		}
+		System.out.println(gameState);
 	}
 	
 	private void printInfo(GameAction gameAction) {
-		MulinoAction action=(MulinoAction) gameAction;
-		System.out.println("Azione: "+action.getTo()[0]+","+action.getTo()[1]);
-				if (action.getRemoveOpponent().isPresent())
-					System.out.print(" rimovendo "+action.getRemoveOpponent().get()[0]+","+action.getRemoveOpponent().get()[1]);
+		System.out.println("Action: " + gameAction);
 	}
-	
 
 }

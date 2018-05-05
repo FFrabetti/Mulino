@@ -1,7 +1,6 @@
 package mulino;
 
 import java.io.IOException;
-import java.net.Socket;
 
 import game.general.GameAction;
 import game.general.GameFactory;
@@ -15,11 +14,11 @@ import mulino.exception.MulinoServerException;
 
 public class MulinoTCPServer implements GameServer {
 
-	private State.Checker checker;
+	private Checker checker;
 	private Diplomat diplomat;
 	private GameFactory<State, Action> factory;
 	
-	public MulinoTCPServer(State.Checker checker, Diplomat diplomat) {
+	public MulinoTCPServer(Checker checker, Diplomat diplomat) {
 		this.checker = checker;
 		this.diplomat = diplomat;
 		
@@ -42,28 +41,32 @@ public class MulinoTCPServer implements GameServer {
 	}
 
 	@Override
-	public GameState getCurrentState() { // waiting...
+	public GameState getCurrentState() {
 		try {
-			State state = (State) diplomat.read(); // after opponent move
-			System.out.println("DEBUG:fatte 2 letture");
+			State state = (State)diplomat.read(); // waiting for opponent move
 
-			// conversion
 			MulinoState ms = (MulinoState) factory.fromState(state);
 			ms.setDutyPlayer(checker); // it's our turn to play
+
 			return ms;
-			
 		} catch (Exception e) {
 			throw new MulinoServerException(e);
 		}
 	}
 	
-	//TODO da fare meglio: è molto simile alla getCurrentState ma con una sola lettura
 	@Override
 	public GameState getInitState() { 
-		GameState gameState = getCurrentState();
-		((MulinoState)gameState).setDutyPlayer(Checker.WHITE);
+//		GameState gameState = getCurrentState();
+//		((MulinoState)gameState).setDutyPlayer(Checker.WHITE);
+//		
+//		return gameState;
 		
-		return gameState;
+		try {
+			diplomat.read();			// posso evitare la conversione della factory
+			return new MulinoState();	// stato iniziale: tocca al bianco e la board è vuota
+		} catch (Exception e) {
+			throw new MulinoServerException(e);
+		}
 	}
 
 }

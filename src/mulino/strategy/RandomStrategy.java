@@ -14,7 +14,7 @@ public class RandomStrategy extends Strategy {
 	private Random rnd;
 	
 	public RandomStrategy() {
-		rnd = new Random();
+		rnd = new Random(4); // same seed -> same game (DEBUG)
 	}
 	
 	@Override

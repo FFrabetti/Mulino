@@ -50,4 +50,9 @@ public class Phase23MulinoAction extends MulinoAction {
 		return finishToPerform(newState);
 	}
 
+	@Override
+	public String toString() {
+		return from + " -> " + super.toString();
+	}
+	
 }

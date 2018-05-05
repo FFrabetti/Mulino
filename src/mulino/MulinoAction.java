@@ -5,7 +5,7 @@ import java.util.Optional;
 import game.general.GameAction;
 import game.general.GameState;
 
-public abstract class MulinoAction extends GameAction {
+public abstract class MulinoAction implements GameAction {
 
 	private Position to;
 	private Optional<Position> removeOpponent;
@@ -53,5 +53,15 @@ public abstract class MulinoAction extends GameAction {
 	
 	@Override
 	public abstract GameState perform(GameState currentState);
+
+	@Override
+	public String toString() {
+		String result = to.toString();
+		
+		if(removeOpponent.isPresent())
+			result += " remove " + removeOpponent.get();
+		
+		return result;
+	}
 	
 }

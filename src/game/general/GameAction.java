@@ -1,6 +1,7 @@
 package game.general;
 
-public abstract class GameAction {
+public interface GameAction {
  
-	public abstract GameState perform (GameState currentState);
+	public GameState perform (GameState currentState);
+	
 }

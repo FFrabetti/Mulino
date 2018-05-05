@@ -79,10 +79,10 @@ public class Board {
 		return this;
 	}
 	
-	public void resetMove() {
-		if(lastFrom!=null)
+	public void undoMove() {
+		if(lastFrom != null)
 			move(lastTo, lastFrom);
-		else
+		else if(lastTo != null)
 			map.remove(lastTo);
 		
 		lastFrom = null;
@@ -92,7 +92,7 @@ public class Board {
 	private Checker getPos(int x, int y) {
 		return map.getOrDefault(new Position(x, y), Checker.EMPTY);
 	}
-	
+
 	private boolean halfColumn(int sign, Checker checker) {
 		for (int i = 1; i <= 3; i++) // tutti e 3 i livelli
 			if(getPos(0, i*sign) != checker) // devono esserci 3 pedine uguali
@@ -118,16 +118,20 @@ public class Board {
 		int x = p.getX();
 		int y = p.getY();
 		Checker checker = map.get(p);
+		boolean res = false;
 		
 		if (x != 0 && y != 0) // punti sulle diagonali (vertici)
-			return (getPos(-x, y) == checker && getPos(0, y) == checker) || // riga (x 0 -x, stessa y)
+			res = (getPos(-x, y) == checker && getPos(0, y) == checker) || // riga (x 0 -x, stessa y)
 					(getPos(x, -y) == checker && getPos(x, 0) == checker);  // colonna (stessa x, y 0 -y)
 		else if (x == 0)	// asse y
-			return (getPos(y, y) == checker && getPos(-y, y) == checker) || // pt simm risp asse y
+			res = (getPos(y, y) == checker && getPos(-y, y) == checker) || // pt simm risp asse y
 					halfColumn(sign(y), checker);
 		else // asse x (y == 0)
-			return (getPos(x, x) == checker && getPos(x, -x) == checker) || // pt simm risp asse x
+			res = (getPos(x, x) == checker && getPos(x, -x) == checker) || // pt simm risp asse x
 					halfRow(sign(x), checker);
+		
+		undoMove();
+		return res;
 	}
 
 	public boolean isInMulino(Position p, List<Position> list) {
@@ -223,7 +227,7 @@ public class Board {
 			if(isValidCoordinate(y-1))
 				list.add(new Position(0, y-1));
 			list.add(new Position(y, y));
-			list.add(new Position(-y, -y));
+			list.add(new Position(-y, y));
 		}
 		else { // diagonali
 			list.add(new Position(x, 0));
@@ -248,4 +252,11 @@ public class Board {
 		return adiacent(p).stream().filter(this::isFree).collect(Collectors.toList());
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder("Board:\n");
+		map.forEach((Position p, Checker c) -> sb.append(p + ": " + c + "\n"));
+		return sb.toString();
+	}
+	
 }
