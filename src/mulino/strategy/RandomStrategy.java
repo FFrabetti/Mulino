@@ -7,7 +7,6 @@ import game.general.GameAction;
 import game.general.GameState;
 import game.mind.Strategy;
 import game.mind.ThinkingStatus;
-import mulino.MulinoState;
 
 public class RandomStrategy extends Strategy {
 
@@ -19,15 +18,13 @@ public class RandomStrategy extends Strategy {
 	
 	@Override
 	public void chooseAction(GameState state) {
-		MulinoState ms = (MulinoState)state;
-		
 		try {
 			Thread.sleep(2000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 
-		List<GameAction> actions = ms.legitActions();
+		List<GameAction> actions = state.legitActions();
 		GameAction action = actions.get(rnd.nextInt(actions.size()));
 				
 		setThinkingStatus(new ThinkingStatus(action, state, null));

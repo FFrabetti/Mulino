@@ -18,35 +18,20 @@ public class Phase23MulinoAction extends MulinoAction {
 		this(from, to, null, phase);
 	}
 	
-	public Phase23MulinoAction() {
-		// may be useful, if you want to manually set all fields
-	}
-	
 	public Position getFrom() {
 		return from;
-	}
-
-	public void setFrom(Position from) {
-		this.from = from;
 	}
 
 	public Phase getPhase() {
 		return phase;
 	}
 
-	public void setPhase(Phase phase) {
-		this.phase = phase;
-	}
-
 	@Override
 	public GameState perform(GameState currentState) {
-		MulinoState oldState = (MulinoState) currentState;
-		MulinoState newState = oldState.clone(); // newState sarà molto simile a oldState
+		MulinoState newState = ((MulinoState)currentState).clone(); // sarà molto simile al precedente
 
-		// sposto la mia pedina
 		newState.moveChecker(from, getTo());
 
-		// parte comune a tutte le fasi
 		return finishToPerform(newState);
 	}
 

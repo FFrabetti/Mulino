@@ -19,34 +19,25 @@ public abstract class MulinoAction implements GameAction {
 		this(to, null);
 	}
 	
-	public MulinoAction() {
-		// may be useful, if you want to manually set all fields
-	}
-	
 	public Position getTo() {
 		return to;
-	}
-
-	public void setTo(Position to) {
-		this.to = to;
 	}
 
 	public Optional<Position> getRemoveOpponent() {
 		return removeOpponent;
 	}
 
-	public void setRemoveOpponent(Position removeOpponent) {
+	private void setRemoveOpponent(Position removeOpponent) {
 		this.removeOpponent = Optional.ofNullable(removeOpponent);
 	}
 	
 	// parte comune a tutte le fasi:
 	protected GameState finishToPerform(MulinoState newState) {
-		// se posso (ho fatto un mulino) rimuovo una pedina nemica
+		// se ho fatto un mulino posso rimuovere una pedina nemica
 		if (removeOpponent.isPresent())
 			newState.removeChecker(removeOpponent.get());
 
-		// adesso toccherà muovere all'avversario
-		newState.switchDutyPlayer();
+		newState.switchDutyPlayer(); // poi toccherà all'avversario
 
 		return newState;
 	}

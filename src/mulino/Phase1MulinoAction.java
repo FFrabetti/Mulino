@@ -12,18 +12,12 @@ public class Phase1MulinoAction extends MulinoAction {
 		this(to, null);
 	}
 	
-	public Phase1MulinoAction() {
-		// may be useful, if you want to manually set all fields
-	}	
-	
 	@Override
 	public GameState perform(GameState currentState) {
-		MulinoState oldState = (MulinoState) currentState;
-		MulinoState newState = oldState.clone(); // newState sarà molto simile a oldState
+		MulinoState newState = ((MulinoState)currentState).clone(); // sarà molto simile al precedente
 
 		newState.playChecker(getTo());
 
-		// parte comune a tutte le fasi
 		return finishToPerform(newState);
 	}
 

@@ -32,15 +32,6 @@ public class MulinoState extends GameState {
 		this(new Board(), MulinoSettings.INITIAL_CHECKERS, MulinoSettings.INITIAL_CHECKERS);
 	}
 
-	// debug
-	// private void printInfo(GameAction gameAction) {
-	// MulinoAction action=(MulinoAction) gameAction;
-	// System.out.println("Azione: "+action.getTo()[0]+","+action.getTo()[1]);
-	// if (action.getRemoveOpponent().isPresent())
-	// System.out.print(" rimovendo
-	// "+action.getRemoveOpponent().get()[0]+","+action.getRemoveOpponent().get()[1]);
-	// }
-
 	// può essere calcolata facilmente -> non devo preoccuparmi di aggiornarla!
 	public Phase getCurrentPhase() {
 		if (availableCheckers[W]>0 || availableCheckers[B]>0)
@@ -63,6 +54,10 @@ public class MulinoState extends GameState {
 		dutyPlayer = enemyPlayer();
 	}
 	
+	public Board getBoard() {
+		return board;
+	}
+	
 	// metodi fantastici e super efficienti che risolvono pure la fame nel mondo...
 	public int getCheckers(Checker player) {
 		return availableCheckers[player.ordinal() - 1];
@@ -78,6 +73,8 @@ public class MulinoState extends GameState {
 
 	@Override
 	public boolean isOver() {
+		// TODO: se uno non si può muovere (fase2)?
+		// TODO: patta se stesso stato ripetuto?
 		return getCurrentPhase()==Phase.FINAL &&
 				(board.checkers(Checker.WHITE) < 3 || board.checkers(Checker.BLACK) < 3);
 	}
@@ -138,6 +135,7 @@ public class MulinoState extends GameState {
 		List<Position> mulinoEnemies = new LinkedList<>();
 		List<Position> isolatedEnemies = new LinkedList<>();
 
+//		board.positions(enemyPlayer()).forEach(p -> { });
 		for (Position p : board.getPositions(enemyPlayer())) {
 			// evito di controllare 2 volte le pedine che so già essere in un mulino
 			if (!mulinoEnemies.contains(p)) {
@@ -167,6 +165,7 @@ public class MulinoState extends GameState {
 		List<GameAction> list = new LinkedList<>();
 		List<Position> removable = new LinkedList<>();
 
+//		board.positions(board::isFree).forEach(to -> { });
 		board.freePositions().forEach(to -> {
 			if (board.withMove(to, dutyPlayer).isInMulino(to)) {
 				if (removable.isEmpty())
@@ -183,18 +182,22 @@ public class MulinoState extends GameState {
 	private List<GameAction> phase23Actions() {
 		List<GameAction> list = new LinkedList<>();
 		List<Position> removable = new LinkedList<>();
-
+		Phase currentPhase = getCurrentPhase();
+		int checkers = board.checkers(dutyPlayer);
+		// posso spostarla in un posto adiacente, se libero
+		// oppure in uno libero qualsiasi (se checkers == 3)
+		List<Position> freePositions = checkers==3 ? board.freePositions() : null;
+		
+//		board.positions(dutyPlayer).forEach(from -> { });
 		board.getPositions(dutyPlayer).forEach(from -> {
-			// posso spostarla in un posto adiacente, se libero
-			// oppure in uno libero qualsiasi (se == 3)
-			for (Position to : (board.checkers(dutyPlayer)==3 ? board.freePositions() : board.freeAdiacent(from))) {
+			for (Position to : (checkers==3 ? freePositions : board.freeAdiacent(from))) {
 				if (board.withMove(from, to).isInMulino(to)) {
 					if (removable.isEmpty())
 						removable.addAll(findEnemies());
 
-					removable.forEach(r -> list.add(new Phase23MulinoAction(from, to, r, getCurrentPhase())));
+					removable.forEach(r -> list.add(new Phase23MulinoAction(from, to, r, currentPhase)));
 				} else
-					list.add(new Phase23MulinoAction(from, to, getCurrentPhase()));
+					list.add(new Phase23MulinoAction(from, to, currentPhase));
 			}
 		});
 

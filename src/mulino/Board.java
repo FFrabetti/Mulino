@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -24,7 +25,7 @@ public class Board {
 	private Map<Position, Checker> map;
 	private int[] checkers; // potrei contarle ogni volta, ma è più veloce averle
 
-	// for withMove and resetMove
+	// for withMove and undoMove
 	private Position lastFrom;
 	private Position lastTo;
 
@@ -64,6 +65,16 @@ public class Board {
 	public List<Position> getPositions(Checker player) {
 //		return map.entrySet().stream().filter(e -> e.getValue()==player).map(Entry::getKey).collect(Collectors.toList());
 		return map.keySet().stream().filter(p -> map.get(p)==player).collect(Collectors.toList());
+	}
+	
+	// more efficient methods
+	// they avoid the creation of a List<Position>, if I just need to iterate on each element
+	public Stream<Position> positions(Predicate<? super Position> predicate) {
+		return Stream.of(positions).filter(predicate);
+	}
+	
+	public Stream<Position> positions(Checker player) {
+		return map.keySet().stream().filter(p -> map.get(p)==player);
 	}
 	
 	public Board withMove(Position p, Checker player) {
@@ -111,6 +122,32 @@ public class Board {
 	
 	private int sign(int n) {
 		return n>=0 ? 1 : -1;
+	}
+
+	// data una posizione p, ritorna le 6 posizioni in cui ci può essere un mulino:
+	// indici 0-2: posizioni nella riga (inclusa p)
+	// indici 3-5: posizioni nella colonna (inclusa p)
+	public Position[] mulinoPositions(Position p) {
+		int x = p.getX();
+		int y = p.getY();
+		Position[] res = new Position[6];
+		
+		for(int i=0; i<3; i++) {
+			if (x != 0 && y != 0) { // punti sulle diagonali (vertici)
+				res[i] = new Position((-x)+i*x, y);		// riga, stessa y
+				res[i+3] = new Position(x, (-y)+i*y);	// col, stessa x
+			}
+			else if (x == 0) {	// asse y
+				res[i] = new Position((-y)+i*y, y);			// riga, stessa y
+				res[i+3] = new Position(0, (i+1)*sign(y));	// col, stessa x
+			}
+			else {	// asse x (y == 0)
+				res[i] = new Position((i+1)*sign(x), 0);	// riga, stessa y
+				res[i+3] = new Position(x, (-x)+i*x);		// col, stessa x
+			}
+		}
+		
+		return res;
 	}
 	
 	// mi dice se la posizione "p" fa parte di un mulino
@@ -181,6 +218,7 @@ public class Board {
 	
 	@Override
 	public boolean equals(Object o) {
+		// TODO: simmetrie scacchiera
 		return o instanceof Board && ((Board)o).map.equals(this.map);
 	}
 	
@@ -251,6 +289,11 @@ public class Board {
 	public List<Position> freeAdiacent(Position p) {
 		return adiacent(p).stream().filter(this::isFree).collect(Collectors.toList());
 	}
+	
+	// more efficient version
+//	public Stream<Position> freeAdiacentStream(Position p) {
+//		return adiacent(p).stream().filter(this::isFree);
+//	}
 
 	@Override
 	public String toString() {
