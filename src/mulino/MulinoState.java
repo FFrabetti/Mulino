@@ -129,7 +129,7 @@ public class MulinoState extends GameState {
 	}
 
 	// utility
-	private Checker enemyPlayer() {
+	public Checker enemyPlayer() {
 		return dutyPlayer == Checker.WHITE ? Checker.BLACK : Checker.WHITE;
 	}
 
