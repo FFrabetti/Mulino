@@ -17,12 +17,12 @@ public class FunzioneEuristica implements HeuristicFunction {
 	private int[][] valori = new int[3][3];
 
 	public FunzioneEuristica() {
-		valori[0][0] = 1;
-		valori[1][0] = 7;
-		valori[0][1] = 3;
-		valori[2][0] = 29;
-		valori[0][2] = 15;
-		valori[1][1] = 0;
+		valori[0][0] = 1; // pedina giocata in riga vuota
+		valori[1][0] = 7; // ho già un'altra pedina e l'ultimo spazio è vuoto -> minaccio un mulino!
+		valori[0][1] = 3; // stessa riga di un nemico -> non può più farci mulino
+		valori[2][0] = 29; // due pedine mie + quella che gioco -> MULINO!
+		valori[0][2] = 15; // stava per fare mulino ma occupo l'ultimo spazio della riga -> ehhh volevi!
+		valori[1][1] = 0; // pedina mia e pedina sua... perché giocarne un'altra? :(
 	}
 
 	/*
@@ -45,15 +45,15 @@ public class FunzioneEuristica implements HeuristicFunction {
 		int maxActionVal = 0;
 		if (s.getCurrentPhase() == Phase.FIRST) {
 			for (GameAction a : s.legitActions()) {
-				maxActionVal = phase1ActionValue(s, (Phase1MulinoAction)a);
-				if(maxActionVal == 30)
+				maxActionVal = phase1ActionValue(s, (Phase1MulinoAction) a);
+				if (maxActionVal == 30)
 					break;
 			}
-			value = maxActionVal; // in fase 1 un buono stato coincide con una buona mossa
+			value = maxActionVal; // in fase 1 un buono stato coincide con una buona mossa a disposizione
 		} else {
 			for (GameAction a : s.legitActions()) {
-				maxActionVal = phase23ActionValue(s, (Phase23MulinoAction)a);
-				if(maxActionVal == 30)
+				maxActionVal = phase23ActionValue(s, (Phase23MulinoAction) a);
+				if (maxActionVal == 30)
 					break;
 			}
 			value = maxActionVal + stateValue(s); // in fase 23 sullo stato pesano anche il numero di pedine rimaste
@@ -64,70 +64,94 @@ public class FunzioneEuristica implements HeuristicFunction {
 	private int stateValue(MulinoState state) {
 		return (state.getCheckers(state.getDutyPlayer()) - state.getCheckers(state.enemyPlayer()));
 	}
-	
+
 	private int phase1ActionValue(MulinoState state, Phase1MulinoAction action) {
 		int dp = 0;
 		int ep = 0;
 		int val = 0;
+		Checker c;
+		Checker enemyPlayer = state.enemyPlayer();
+		Checker dutyPlayer = state.getDutyPlayer();
 
+		// recupero le posizioni "mulinabili" (non pos[2]=pos[5]=action.getTo())
+		Position[] pos = state.getBoard().mulinoPositions(action.getTo());
 		// controllo la riga
-		for(Position p : state.getRow(action.getTo())) {
-			if(!p.equals(action.getTo())) {
-			Checker c = state.getBoard().getChecker(p);
-			if(c == state.getDutyPlayer())
-				dp++;
-			else if(c == state.getDutyPlayer())
-				ep++;
-			}
-		}
+		c = state.getBoard().getChecker(pos[0]);
+		if (c == dutyPlayer)
+			dp++;
+		else if (c == enemyPlayer)
+			ep++;
+		c = state.getBoard().getChecker(pos[1]);
+		if (c == dutyPlayer)
+			dp++;
+		else if (c == enemyPlayer)
+			ep++;
 		val = val + valori[dp][ep];
 		// controllo la colonna
 		dp = 0;
 		ep = 0;
-		for(Position p : state.getColumn(action.getTo())) {
-			if(!p.equals(action.getTo())) {
-			Checker c = state.getBoard().getChecker(p);
-			if(c == state.getDutyPlayer())
-				dp++;
-			else if(c == state.getDutyPlayer())
-				ep++;
-			}
-		}
+		c = state.getBoard().getChecker(pos[3]);
+		if (c == dutyPlayer)
+			dp++;
+		else if (c == enemyPlayer)
+			ep++;
+		c = state.getBoard().getChecker(pos[4]);
+		if (c == dutyPlayer)
+			dp++;
+		else if (c == enemyPlayer)
+			ep++;
 		val = val + valori[dp][ep];
-		
+
 		return val;
 	}
 
+	// qui devo ricordarmi di non considerare la posizione di partenza della pedina
+	// -> !pos[P].equals(action.getFrom());
 	private int phase23ActionValue(MulinoState state, Phase23MulinoAction action) {
 		int dp = 0;
 		int ep = 0;
 		int val = 0;
+		Checker c;
+		Checker enemyPlayer = state.enemyPlayer();
+		Checker dutyPlayer = state.getDutyPlayer();
 
+		// recupero le posizioni "mulinabili" (non pos[2]=pos[5]=action.getTo())
+		Position[] pos = state.getBoard().mulinoPositions(action.getTo());
 		// controllo la riga
-		for(Position p : state.getRow(action.getTo())) {
-			if(!p.equals(action.getTo()) && !p.equals(action.getFrom())) {
-			Checker c = state.getBoard().getChecker(p);
-			if(c == state.getDutyPlayer())
+		if (!pos[0].equals(action.getFrom())) {
+			c = state.getBoard().getChecker(pos[0]);
+			if (c == dutyPlayer)
 				dp++;
-			else if(c == state.getDutyPlayer())
+			else if (c == enemyPlayer)
 				ep++;
-			}
+		}
+		if (!pos[1].equals(action.getFrom())) {
+			c = state.getBoard().getChecker(pos[1]);
+			if (c == dutyPlayer)
+				dp++;
+			else if (c == enemyPlayer)
+				ep++;
 		}
 		val = val + valori[dp][ep];
 		// controllo la colonna
 		dp = 0;
 		ep = 0;
-		for(Position p : state.getColumn(action.getTo())) {
-			if(!p.equals(action.getTo()) && !p.equals(action.getFrom())) {
-			Checker c = state.getBoard().getChecker(p);
-			if(c == state.getDutyPlayer())
+		if (!pos[3].equals(action.getFrom())) {
+			c = state.getBoard().getChecker(pos[3]);
+			if (c == dutyPlayer)
 				dp++;
-			else if(c == state.getDutyPlayer())
+			else if (c == enemyPlayer)
 				ep++;
-			}
+		}
+		if (!pos[4].equals(action.getFrom())) {
+			c = state.getBoard().getChecker(pos[4]);
+			if (c == dutyPlayer)
+				dp++;
+			else if (c == enemyPlayer)
+				ep++;
 		}
 		val = val + valori[dp][ep];
-		
+
 		return val;
 	}
 

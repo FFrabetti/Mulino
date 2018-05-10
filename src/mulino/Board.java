@@ -100,6 +100,10 @@ public class Board {
 		lastTo = null;
 	}
 
+	public Checker getChecker(Position p) {
+		return getPos(p.getX(), p.getY());
+	}
+	
 	private Checker getPos(int x, int y) {
 		return map.getOrDefault(new Position(x, y), Checker.EMPTY);
 	}
