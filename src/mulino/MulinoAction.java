@@ -36,7 +36,8 @@ public abstract class MulinoAction implements GameAction {
 		// se ho fatto un mulino posso rimuovere una pedina nemica
 		if (removeOpponent.isPresent())
 			newState.removeChecker(removeOpponent.get());
-
+		
+		newState.analyzeUtility();//è necessario settare il valore utility dello stato per il minimax
 		newState.switchDutyPlayer(); // poi toccherà all'avversario
 
 		return newState;
