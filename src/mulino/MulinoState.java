@@ -38,7 +38,7 @@ public class MulinoState extends GameState {
 	public Phase getCurrentPhase() {
 		if (availableCheckers[W]>0 || availableCheckers[B]>0)
 			return Phase.FIRST;
-		else if (board.checkers(Checker.WHITE) == 3 || board.checkers(Checker.BLACK) == 3)
+		else if (board.checkers(Checker.WHITE) <= 3 || board.checkers(Checker.BLACK) <= 3)
 			return Phase.FINAL;
 		else
 			return Phase.SECOND;
