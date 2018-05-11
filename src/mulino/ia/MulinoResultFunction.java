@@ -9,7 +9,7 @@ public class MulinoResultFunction implements ResultFunction {
 
 	@Override
 	public Object result(Object state, Action action) {
-		System.out.println((MulinoState)state);
+		//System.out.println((MulinoState)state);
 		return ((MulinoAction)action).perform((MulinoState)state);
 	}
 

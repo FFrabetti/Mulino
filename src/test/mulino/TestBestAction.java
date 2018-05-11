@@ -1,5 +1,6 @@
 package test.mulino;
 
+import aima.core.agent.Action;
 import aima.core.search.adversarial.AdversarialSearch;
 import aima.core.search.adversarial.AlphaBetaSearch;
 import aima.core.search.adversarial.IterativeDeepeningAlphaBetaSearch;
@@ -18,6 +19,9 @@ import mulino.ia.FunzioneEuristica;
 import mulino.ia.MulinoActionsFunction;
 import mulino.ia.MulinoGoalTest;
 import mulino.ia.MulinoResultFunction;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
 
 public class TestBestAction {
 	
@@ -31,20 +35,20 @@ public class TestBestAction {
 	
 	public static void main(String[] args) {
 		MulinoGame game = new MulinoGame();
-		AdversarialSearch<MulinoState,MulinoAction> search = IterativeDeepeningAlphaBetaSearch.createFor(game,-1,1,40);
+		//AdversarialSearch<MulinoState,MulinoAction> search = IterativeDeepeningAlphaBetaSearch.createFor(game,-1,1,40);
 		//AdversarialSearch<MulinoState, MulinoAction> search = AlphaBetaSearch.createFor(game);
 
 		AStarSearch aSearch = new AStarSearch(new GraphSearch(),new FunzioneEuristica());
 		
 		
-		((IterativeDeepeningAlphaBetaSearch<?, ?, ?>) search).setLogEnabled(true);
+//		((IterativeDeepeningAlphaBetaSearch<?, ?, ?>) search).setLogEnabled(true);
 		Board b = new Board();
 		
 		//stato ad hoc affinchè manchi una mossa per la vittora del bianco 
 		// -> dovrebbe riuscire a calcolare la mossa in pochi istanti
 		b.put(new Position(3,3),Checker.WHITE);
 		b.put(new Position(3,-3),Checker.WHITE);
-		b.put(new Position(2,0),Checker.WHITE);
+		b.put(new Position(1,0),Checker.WHITE);
 		b.put(new Position(0,-1),Checker.WHITE);
 		b.put(new Position(-2,0),Checker.WHITE);
 		
@@ -52,6 +56,12 @@ public class TestBestAction {
 		b.put(new Position(-2,2),Checker.BLACK);
 		b.put(new Position(0,1),Checker.BLACK);
 		
+		//
+//		for(Position p : b.freePositions()) {
+//			b.put(p, Checker.WHITE);
+//		}
+//		b.remove(new Position(3,0));
+//		
 		//altro esempio funzionante
 		
 //		b.put(new Position(0,-2),Checker.WHITE);
@@ -65,24 +75,45 @@ public class TestBestAction {
 		
 
 		MulinoState state = new MulinoState(b,0,0);
-		//state.switchDutyPlayer();
+		System.out.println(state.toString());
 		
 		//prova a star
 		
 		Problem problem = new Problem(state,new MulinoActionsFunction(),new MulinoResultFunction(),new MulinoGoalTest());
 		try {
 			SearchAgent agent= new SearchAgent(problem,aSearch);
+			printActions(agent.getActions());
+			printInstrumentation(agent.getInstrumentation());
+			MulinoAction action = (MulinoAction)agent.getActions().get(0);
+			action.perform(state);
+			System.out.println(action.perform(state).toString());
+
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println("Fine ricerca");
-		
-		System.out.println(state.toString());
 
-		GameAction action = search.makeDecision((MulinoState)state);
-		MulinoState newState= game.getResult((MulinoState)state, (MulinoAction)action);
-		
-		System.out.println(newState.toString());
+		//GameAction action = search.makeDecision((MulinoState)state);
+		//MulinoState newState= game.getResult((MulinoState)state, (MulinoAction)action);
+		//System.out.println(newState.toString());
+	}
+	
+	private static void printInstrumentation(Properties properties) {
+		Iterator<Object> keys = properties.keySet().iterator();
+		while (keys.hasNext()) {
+			String key = (String) keys.next();
+			String property = properties.getProperty(key);
+			System.out.println(key + " : " + property.toString());
+		}
+
+	}
+
+	private static void printActions(List<Action> actions) {
+		System.out.println("SIZE:"+actions.size());
+		for (int i = 0; i < actions.size(); i++) {
+			String action = actions.get(i).toString();
+			System.out.println(action);
+		}
 	}
 }
