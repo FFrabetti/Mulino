@@ -219,8 +219,9 @@ public class MulinoState extends GameState {
 		
 		public void analyzeUtility() {
 			//simile alla isOver...da guardarci
+			Phase phase = getCurrentPhase();
 			
-			if(getCurrentPhase()==Phase.SECOND || getCurrentPhase()==Phase.FINAL ) {
+			if(phase==Phase.FINAL ) {
 				//se il bianco ha meno di 3 pedine: -1 W / +1 B
 				if(board.checkers(Checker.WHITE) < 3) 
 					utility = -1;
@@ -229,13 +230,15 @@ public class MulinoState extends GameState {
 				else if(board.checkers(Checker.BLACK) < 3)
 					utility = 1;
 			}
-			//se il bianco non puà muoversi: -1 W / +1 B
-			if(getCurrentPhase()==Phase.SECOND && !hasAvailableMoves(Checker.WHITE))
-				utility = -1;
-			
-			//se il nero non puà muoversi: +1 W / -1 B
-			if(getCurrentPhase()==Phase.SECOND && !hasAvailableMoves(Checker.BLACK))
-				utility = 1;
+			else {
+				//se il bianco non puà muoversi: -1 W / +1 B
+				if(phase==Phase.SECOND && !hasAvailableMoves(Checker.WHITE))
+					utility = -1;
+				
+				//se il nero non puà muoversi: +1 W / -1 B
+				if(phase==Phase.SECOND && !hasAvailableMoves(Checker.BLACK))
+					utility = 1;
+			}
 		}
 		
 		

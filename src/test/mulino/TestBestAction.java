@@ -1,7 +1,12 @@
 package test.mulino;
 
 import aima.core.search.adversarial.AdversarialSearch;
+import aima.core.search.adversarial.AlphaBetaSearch;
 import aima.core.search.adversarial.IterativeDeepeningAlphaBetaSearch;
+import aima.core.search.framework.SearchAgent;
+import aima.core.search.framework.problem.Problem;
+import aima.core.search.framework.qsearch.GraphSearch;
+import aima.core.search.informed.AStarSearch;
 import game.general.GameAction;
 import it.unibo.ai.didattica.mulino.domain.State.Checker;
 import mulino.Board;
@@ -9,6 +14,10 @@ import mulino.MulinoAction;
 import mulino.MulinoGame;
 import mulino.MulinoState;
 import mulino.Position;
+import mulino.ia.FunzioneEuristica;
+import mulino.ia.MulinoActionsFunction;
+import mulino.ia.MulinoGoalTest;
+import mulino.ia.MulinoResultFunction;
 
 public class TestBestAction {
 	
@@ -25,6 +34,9 @@ public class TestBestAction {
 		AdversarialSearch<MulinoState,MulinoAction> search = IterativeDeepeningAlphaBetaSearch.createFor(game,-1,1,40);
 		//AdversarialSearch<MulinoState, MulinoAction> search = AlphaBetaSearch.createFor(game);
 
+		AStarSearch aSearch = new AStarSearch(new GraphSearch(),new FunzioneEuristica());
+		
+		
 		((IterativeDeepeningAlphaBetaSearch<?, ?, ?>) search).setLogEnabled(true);
 		Board b = new Board();
 		
@@ -36,7 +48,7 @@ public class TestBestAction {
 		b.put(new Position(0,-1),Checker.WHITE);
 		b.put(new Position(-2,0),Checker.WHITE);
 		
-		b.put(new Position(-3,3),Checker.BLACK);
+		b.put(new Position(-3,-3),Checker.BLACK);
 		b.put(new Position(-2,2),Checker.BLACK);
 		b.put(new Position(0,1),Checker.BLACK);
 		
@@ -53,6 +65,18 @@ public class TestBestAction {
 		
 
 		MulinoState state = new MulinoState(b,0,0);
+		//state.switchDutyPlayer();
+		
+		//prova a star
+		
+		Problem problem = new Problem(state,new MulinoActionsFunction(),new MulinoResultFunction(),new MulinoGoalTest());
+		try {
+			SearchAgent agent= new SearchAgent(problem,aSearch);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("Fine ricerca");
 		
 		System.out.println(state.toString());
 
@@ -61,6 +85,4 @@ public class TestBestAction {
 		
 		System.out.println(newState.toString());
 	}
-	
-
 }

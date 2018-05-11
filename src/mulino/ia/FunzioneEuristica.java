@@ -1,12 +1,9 @@
 package mulino.ia;
 
-import java.util.List;
-
-import aima.search.framework.HeuristicFunction;
+import aima.core.search.framework.evalfunc.HeuristicFunction;
 import game.general.GameAction;
 import it.unibo.ai.didattica.mulino.domain.State.Checker;
 import it.unibo.ai.didattica.mulino.domain.State.Phase;
-import mulino.MulinoAction;
 import mulino.MulinoState;
 import mulino.Phase1MulinoAction;
 import mulino.Phase23MulinoAction;
@@ -38,7 +35,7 @@ public class FunzioneEuristica implements HeuristicFunction {
 	 * poi)
 	 */
 	@Override
-	public double getHeuristicValue(Object state) {
+	public double h(Object state) {
 		MulinoState s = (MulinoState) state;
 
 		double value = 0;
@@ -58,7 +55,7 @@ public class FunzioneEuristica implements HeuristicFunction {
 			}
 			value = maxActionVal + stateValue(s); // in fase 23 sullo stato pesano anche il numero di pedine rimaste
 		}
-		return value;
+		return 1/value;
 	}
 
 	private int stateValue(MulinoState state) {

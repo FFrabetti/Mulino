@@ -2,10 +2,11 @@ package mulino;
 
 import java.util.Optional;
 
+import aima.core.agent.Action;
 import game.general.GameAction;
 import game.general.GameState;
 
-public abstract class MulinoAction implements GameAction {
+public abstract class MulinoAction implements GameAction{
 
 	private Position to;
 	private Optional<Position> removeOpponent;
@@ -54,6 +55,12 @@ public abstract class MulinoAction implements GameAction {
 			result += " remove " + removeOpponent.get();
 		
 		return result;
+	}
+	
+	@Override
+	public boolean isNoOp() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 	
 }
