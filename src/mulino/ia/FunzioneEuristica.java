@@ -17,8 +17,8 @@ public class FunzioneEuristica implements HeuristicFunction {
 		valori[0][0] = 1; // pedina giocata in riga vuota
 		valori[1][0] = 7; // ho già un'altra pedina e l'ultimo spazio è vuoto -> minaccio un mulino!
 		valori[0][1] = 3; // stessa riga di un nemico -> non può più farci mulino
-		valori[2][0] = 29; // due pedine mie + quella che gioco -> MULINO!
-		valori[0][2] = 15; // stava per fare mulino ma occupo l'ultimo spazio della riga -> ehhh volevi!
+		valori[2][0] = 59; // due pedine mie + quella che gioco -> MULINO!
+		valori[0][2] = 30; // stava per fare mulino ma occupo l'ultimo spazio della riga -> ehhh volevi!
 		valori[1][1] = 0; // pedina mia e pedina sua... perché giocarne un'altra? :(
 	}
 
@@ -40,22 +40,27 @@ public class FunzioneEuristica implements HeuristicFunction {
 
 		double value = 0;
 		int maxActionVal = 0;
+		int tempVal = 0;
 		if (s.getCurrentPhase() == Phase.FIRST) {
 			for (GameAction a : s.legitActions()) {
-				maxActionVal = phase1ActionValue(s, (Phase1MulinoAction) a);
-				if (maxActionVal == 30)
+				tempVal = phase1ActionValue(s, (Phase1MulinoAction) a);
+				if (tempVal > maxActionVal)
+					maxActionVal = tempVal;
+				if (maxActionVal == 60)
 					break;
 			}
 			value = maxActionVal; // in fase 1 un buono stato coincide con una buona mossa a disposizione
 		} else {
 			for (GameAction a : s.legitActions()) {
-				maxActionVal = phase23ActionValue(s, (Phase23MulinoAction) a);
-				if (maxActionVal == 30)
+				tempVal = phase23ActionValue(s, (Phase23MulinoAction) a);
+				if (tempVal > maxActionVal)
+					maxActionVal = tempVal;
+				if (maxActionVal == 60)
 					break;
 			}
 			value = maxActionVal + stateValue(s); // in fase 23 sullo stato pesano anche il numero di pedine rimaste
 		}
-		return 1/value;
+		return 1 / value;
 	}
 
 	private int stateValue(MulinoState state) {
@@ -70,33 +75,55 @@ public class FunzioneEuristica implements HeuristicFunction {
 		Checker enemyPlayer = state.enemyPlayer();
 		Checker dutyPlayer = state.getDutyPlayer();
 
-		// recupero le posizioni "mulinabili" (non pos[2]=pos[5]=action.getTo())
+		// recupero le posizioni "mulinabili"
 		Position[] pos = state.getBoard().mulinoPositions(action.getTo());
 		// controllo la riga
-		c = state.getBoard().getChecker(pos[0]);
-		if (c == dutyPlayer)
-			dp++;
-		else if (c == enemyPlayer)
-			ep++;
-		c = state.getBoard().getChecker(pos[1]);
-		if (c == dutyPlayer)
-			dp++;
-		else if (c == enemyPlayer)
-			ep++;
+		if (!pos[0].equals(action.getTo())) {
+			c = state.getBoard().getChecker(pos[0]);
+			if (c == dutyPlayer)
+				dp++;
+			else if (c == enemyPlayer)
+				ep++;
+		}
+		if (!pos[1].equals(action.getTo())) {
+			c = state.getBoard().getChecker(pos[1]);
+			if (c == dutyPlayer)
+				dp++;
+			else if (c == enemyPlayer)
+				ep++;
+		}
+		if(!pos[2].equals(action.getTo())){
+			c = state.getBoard().getChecker(pos[2]);
+			if (c == dutyPlayer)
+				dp++;
+			else if (c == enemyPlayer)
+				ep++;
+		}
 		val = val + valori[dp][ep];
 		// controllo la colonna
 		dp = 0;
 		ep = 0;
-		c = state.getBoard().getChecker(pos[3]);
-		if (c == dutyPlayer)
-			dp++;
-		else if (c == enemyPlayer)
-			ep++;
-		c = state.getBoard().getChecker(pos[4]);
-		if (c == dutyPlayer)
-			dp++;
-		else if (c == enemyPlayer)
-			ep++;
+		if (!pos[3].equals(action.getTo())) {
+			c = state.getBoard().getChecker(pos[3]);
+			if (c == dutyPlayer)
+				dp++;
+			else if (c == enemyPlayer)
+				ep++;
+		}
+		if (!pos[4].equals(action.getTo())) {
+			c = state.getBoard().getChecker(pos[4]);
+			if (c == dutyPlayer)
+				dp++;
+			else if (c == enemyPlayer)
+				ep++;
+		}
+		if(!pos[5].equals(action.getTo())){
+			c = state.getBoard().getChecker(pos[5]);
+			if (c == dutyPlayer)
+				dp++;
+			else if (c == enemyPlayer)
+				ep++;
+		}
 		val = val + valori[dp][ep];
 
 		return val;
@@ -112,18 +139,25 @@ public class FunzioneEuristica implements HeuristicFunction {
 		Checker enemyPlayer = state.enemyPlayer();
 		Checker dutyPlayer = state.getDutyPlayer();
 
-		// recupero le posizioni "mulinabili" (non pos[2]=pos[5]=action.getTo())
+		// recupero le posizioni "mulinabili"
 		Position[] pos = state.getBoard().mulinoPositions(action.getTo());
 		// controllo la riga
-		if (!pos[0].equals(action.getFrom())) {
+		if (!pos[0].equals(action.getFrom()) && !pos[0].equals(action.getTo())) {
 			c = state.getBoard().getChecker(pos[0]);
 			if (c == dutyPlayer)
 				dp++;
 			else if (c == enemyPlayer)
 				ep++;
 		}
-		if (!pos[1].equals(action.getFrom())) {
+		if (!pos[1].equals(action.getFrom()) && !pos[1].equals(action.getTo())) {
 			c = state.getBoard().getChecker(pos[1]);
+			if (c == dutyPlayer)
+				dp++;
+			else if (c == enemyPlayer)
+				ep++;
+		}
+		if (!pos[2].equals(action.getFrom()) && !pos[2].equals(action.getTo())) {
+			c = state.getBoard().getChecker(pos[2]);
 			if (c == dutyPlayer)
 				dp++;
 			else if (c == enemyPlayer)
@@ -133,15 +167,22 @@ public class FunzioneEuristica implements HeuristicFunction {
 		// controllo la colonna
 		dp = 0;
 		ep = 0;
-		if (!pos[3].equals(action.getFrom())) {
+		if (!pos[3].equals(action.getFrom()) && !pos[3].equals(action.getTo())) {
 			c = state.getBoard().getChecker(pos[3]);
 			if (c == dutyPlayer)
 				dp++;
 			else if (c == enemyPlayer)
 				ep++;
 		}
-		if (!pos[4].equals(action.getFrom())) {
+		if (!pos[4].equals(action.getFrom()) && !pos[4].equals(action.getTo())) {
 			c = state.getBoard().getChecker(pos[4]);
+			if (c == dutyPlayer)
+				dp++;
+			else if (c == enemyPlayer)
+				ep++;
+		}
+		if (!pos[5].equals(action.getFrom()) && !pos[5].equals(action.getTo())) {
+			c = state.getBoard().getChecker(pos[5]);
 			if (c == dutyPlayer)
 				dp++;
 			else if (c == enemyPlayer)

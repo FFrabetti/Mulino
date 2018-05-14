@@ -49,12 +49,13 @@ public class TestBestAction {
 		b.put(new Position(3,3),Checker.WHITE);
 		b.put(new Position(3,-3),Checker.WHITE);
 		b.put(new Position(1,0),Checker.WHITE);
-		b.put(new Position(0,-1),Checker.WHITE);
+		b.put(new Position(0,-2),Checker.WHITE);
 		b.put(new Position(-2,0),Checker.WHITE);
 		
 		b.put(new Position(-3,-3),Checker.BLACK);
 		b.put(new Position(-2,2),Checker.BLACK);
 		b.put(new Position(0,1),Checker.BLACK);
+		b.put(new Position(0,-3), Checker.BLACK);
 		
 		//
 //		for(Position p : b.freePositions()) {
@@ -79,21 +80,25 @@ public class TestBestAction {
 		
 		//prova a star
 		
-		Problem problem = new Problem(state,new MulinoActionsFunction(),new MulinoResultFunction(),new MulinoGoalTest());
 		try {
+			Problem problem = new Problem(state,new MulinoActionsFunction(),new MulinoResultFunction(),new MulinoGoalTest());
 			SearchAgent agent= new SearchAgent(problem,aSearch);
 			printActions(agent.getActions());
 			printInstrumentation(agent.getInstrumentation());
-			MulinoAction action = (MulinoAction)agent.getActions().get(0);
-			action.perform(state);
-			System.out.println(action.perform(state).toString());
+			int i = 1;
+			for(Action a : agent.getActions()) {
+				System.out.println("Mossa " + i++ + ": " + ((MulinoAction)a));
+				MulinoAction action = (MulinoAction)a;
+				state = (MulinoState)action.perform(state);
+				System.out.println(state.toString());
+			}
 
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		
 		//GameAction action = search.makeDecision((MulinoState)state);
 		//MulinoState newState= game.getResult((MulinoState)state, (MulinoAction)action);
 		//System.out.println(newState.toString());

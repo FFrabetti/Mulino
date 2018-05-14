@@ -21,22 +21,21 @@ public class MulinoState extends GameState {
 	private Checker dutyPlayer;
 	private int[] availableCheckers; // per fase 1
 	private Board board;
-	private double utility=-2;
-
+	private double utility = -2;
 
 	public MulinoState(Board board, int avWCheckers, int avBCheckers) {
 		dutyPlayer = Checker.WHITE;
 		availableCheckers = new int[] { avWCheckers, avBCheckers };
 		this.board = board;
 	}
-	
+
 	public MulinoState() {
 		this(new Board(), MulinoSettings.INITIAL_CHECKERS, MulinoSettings.INITIAL_CHECKERS);
 	}
 
 	// può essere calcolata facilmente -> non devo preoccuparmi di aggiornarla!
 	public Phase getCurrentPhase() {
-		if (availableCheckers[W]>0 || availableCheckers[B]>0)
+		if (availableCheckers[W] > 0 || availableCheckers[B] > 0)
 			return Phase.FIRST;
 		else if (board.checkers(Checker.WHITE) <= 3 || board.checkers(Checker.BLACK) <= 3)
 			return Phase.FINAL;
@@ -55,11 +54,11 @@ public class MulinoState extends GameState {
 	public void switchDutyPlayer() {
 		dutyPlayer = enemyPlayer();
 	}
-	
+
 	public Board getBoard() {
 		return board;
 	}
-	
+
 	// metodi fantastici e super efficienti che risolvono pure la fame nel mondo...
 	public int getCheckers(Checker player) {
 		return availableCheckers[player.ordinal() - 1];
@@ -77,8 +76,8 @@ public class MulinoState extends GameState {
 	public boolean isOver() {
 		// TODO: se uno non si può muovere (fase2)?
 		// TODO: patta se stesso stato ripetuto?
-		return getCurrentPhase()==Phase.FINAL &&
-				(board.checkers(Checker.WHITE) < 3 || board.checkers(Checker.BLACK) < 3);
+		return getCurrentPhase() == Phase.FINAL
+				&& (board.checkers(Checker.WHITE) < 3 || board.checkers(Checker.BLACK) < 3);
 	}
 
 	@Override
@@ -88,14 +87,12 @@ public class MulinoState extends GameState {
 
 	@Override
 	public boolean equals(Object o) {
-		if(!(o instanceof MulinoState))
+		if (!(o instanceof MulinoState))
 			return false;
-		
-		MulinoState that = (MulinoState)o;
-		return that.dutyPlayer==this.dutyPlayer &&
-				that.availableCheckers[W]==this.availableCheckers[W] &&
-				that.availableCheckers[B]==this.availableCheckers[B] &&
-				that.board.equals(this.board);
+
+		MulinoState that = (MulinoState) o;
+		return that.dutyPlayer == this.dutyPlayer && that.availableCheckers[W] == this.availableCheckers[W]
+				&& that.availableCheckers[B] == this.availableCheckers[B] && that.board.equals(this.board);
 	}
 
 	@Override
@@ -137,7 +134,7 @@ public class MulinoState extends GameState {
 		List<Position> mulinoEnemies = new LinkedList<>();
 		List<Position> isolatedEnemies = new LinkedList<>();
 
-//		board.positions(enemyPlayer()).forEach(p -> { });
+		// board.positions(enemyPlayer()).forEach(p -> { });
 		for (Position p : board.getPositions(enemyPlayer())) {
 			// evito di controllare 2 volte le pedine che so già essere in un mulino
 			if (!mulinoEnemies.contains(p)) {
@@ -167,7 +164,7 @@ public class MulinoState extends GameState {
 		List<GameAction> list = new LinkedList<>();
 		List<Position> removable = new LinkedList<>();
 
-//		board.positions(board::isFree).forEach(to -> { });
+		// board.positions(board::isFree).forEach(to -> { });
 		board.freePositions().forEach(to -> {
 			if (board.withMove(to, dutyPlayer).isInMulino(to)) {
 				if (removable.isEmpty())
@@ -188,11 +185,11 @@ public class MulinoState extends GameState {
 		int checkers = board.checkers(dutyPlayer);
 		// posso spostarla in un posto adiacente, se libero
 		// oppure in uno libero qualsiasi (se checkers == 3)
-		List<Position> freePositions = checkers==3 ? board.freePositions() : null;
-		
-//		board.positions(dutyPlayer).forEach(from -> { });
+		List<Position> freePositions = checkers == 3 ? board.freePositions() : null;
+
+		// board.positions(dutyPlayer).forEach(from -> { });
 		board.getPositions(dutyPlayer).forEach(from -> {
-			for (Position to : (checkers==3 ? freePositions : board.freeAdiacent(from))) {
+			for (Position to : (checkers == 3 ? freePositions : board.freeAdiacent(from))) {
 				if (board.withMove(from, to).isInMulino(to)) {
 					if (removable.isEmpty())
 						removable.addAll(findEnemies());
@@ -208,46 +205,44 @@ public class MulinoState extends GameState {
 
 	@Override
 	public String toString() {
-		return dutyPlayer + " [" + getCurrentPhase() + "] " + board;
+		return dutyPlayer + " [" + getCurrentPhase() + "]\n" + board;
 	}
-	
-	//----AGGIUNTE PER MINIMAX
-	
-		public double getUtility() {
-			return utility;
+
+	// ----AGGIUNTE PER MINIMAX
+
+	public double getUtility() {
+		return utility;
+	}
+
+	public void analyzeUtility() {
+		// simile alla isOver...da guardarci
+		Phase phase = getCurrentPhase();
+
+		if (phase == Phase.FINAL) {
+			// se il bianco ha meno di 3 pedine: -1 W / +1 B
+			if (board.checkers(Checker.WHITE) < 3)
+				utility = -1;
+
+			// se il nero ha meno di 3 pedine: +1 W / -1 B
+			else if (board.checkers(Checker.BLACK) < 3)
+				utility = 1;
+		} else {
+			// se il bianco non puà muoversi: -1 W / +1 B
+			if (phase == Phase.SECOND && !hasAvailableMoves(Checker.WHITE))
+				utility = -1;
+
+			// se il nero non puà muoversi: +1 W / -1 B
+			if (phase == Phase.SECOND && !hasAvailableMoves(Checker.BLACK))
+				utility = 1;
 		}
-		
-		public void analyzeUtility() {
-			//simile alla isOver...da guardarci
-			Phase phase = getCurrentPhase();
-			
-			if(phase==Phase.FINAL ) {
-				//se il bianco ha meno di 3 pedine: -1 W / +1 B
-				if(board.checkers(Checker.WHITE) < 3) 
-					utility = -1;
-				
-				//se il nero ha meno di 3 pedine: +1 W / -1 B
-				else if(board.checkers(Checker.BLACK) < 3)
-					utility = 1;
-			}
-			else {
-				//se il bianco non puà muoversi: -1 W / +1 B
-				if(phase==Phase.SECOND && !hasAvailableMoves(Checker.WHITE))
-					utility = -1;
-				
-				//se il nero non puà muoversi: +1 W / -1 B
-				if(phase==Phase.SECOND && !hasAvailableMoves(Checker.BLACK))
-					utility = 1;
-			}
+	}
+
+	private boolean hasAvailableMoves(Checker checker) {
+		for (Position p : board.getPositions(checker)) {
+			if (!board.freeAdiacent(p).isEmpty())
+				return true;
 		}
-		
-		
-		private boolean hasAvailableMoves(Checker checker) {
-			for(Position p: board.getPositions(checker)) {
-				if(!board.freeAdiacent(p).isEmpty())
-					return true;
-			}
-			return false;
-		}
-	
+		return false;
+	}
+
 }
