@@ -17,8 +17,8 @@ public class FunzioneEuristica implements HeuristicFunction {
 		valori[0][0] = 1; // pedina giocata in riga vuota
 		valori[1][0] = 7; // ho già un'altra pedina e l'ultimo spazio è vuoto -> minaccio un mulino!
 		valori[0][1] = 3; // stessa riga di un nemico -> non può più farci mulino
-		valori[2][0] = 59; // due pedine mie + quella che gioco -> MULINO!
-		valori[0][2] = 30; // stava per fare mulino ma occupo l'ultimo spazio della riga -> ehhh volevi!
+		valori[2][0] = 56; // due pedine mie + quella che gioco -> MULINO!
+		valori[0][2] = 32; // stava per fare mulino ma occupo l'ultimo spazio della riga -> ehhh volevi!
 		valori[1][1] = 0; // pedina mia e pedina sua... perché giocarne un'altra? :(
 	}
 
@@ -46,7 +46,7 @@ public class FunzioneEuristica implements HeuristicFunction {
 				tempVal = phase1ActionValue(s, (Phase1MulinoAction) a);
 				if (tempVal > maxActionVal)
 					maxActionVal = tempVal;
-				if (maxActionVal == 60)
+				if (maxActionVal == 64)
 					break;
 			}
 			value = maxActionVal; // in fase 1 un buono stato coincide con una buona mossa a disposizione
@@ -55,7 +55,7 @@ public class FunzioneEuristica implements HeuristicFunction {
 				tempVal = phase23ActionValue(s, (Phase23MulinoAction) a);
 				if (tempVal > maxActionVal)
 					maxActionVal = tempVal;
-				if (maxActionVal == 60)
+				if (maxActionVal == 64)
 					break;
 			}
 			value = maxActionVal + stateValue(s); // in fase 23 sullo stato pesano anche il numero di pedine rimaste
@@ -64,7 +64,7 @@ public class FunzioneEuristica implements HeuristicFunction {
 	}
 
 	private int stateValue(MulinoState state) {
-		return (state.getCheckers(state.getDutyPlayer()) - state.getCheckers(state.enemyPlayer()));
+		return (state.getBoard().checkers(state.getDutyPlayer()) - state.getBoard().checkers(state.enemyPlayer()));
 	}
 
 	private int phase1ActionValue(MulinoState state, Phase1MulinoAction action) {
