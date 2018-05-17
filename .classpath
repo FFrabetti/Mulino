@@ -6,6 +6,6 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/Letizia/Desktop/Mulino/aima-core-3.0.0.jar"/>
+	<classpathentry kind="lib" path="D:/Università/Laurea Magistrale/Fondamenti di intelligenza artificiale/aima-core-3.0.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
