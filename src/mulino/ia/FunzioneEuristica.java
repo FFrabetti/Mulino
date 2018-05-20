@@ -11,6 +11,8 @@ import mulino.Position;
 
 public class FunzioneEuristica implements HeuristicFunction {
 
+	private static final int MUL_FACTOR = 100;
+
 	private int[][] valori = new int[3][3];
 
 	public FunzioneEuristica() {
@@ -77,7 +79,7 @@ public class FunzioneEuristica implements HeuristicFunction {
 	}
 
 	private int stateValue(int ch1, int ch2) {
-		return (ch1 - ch2)*10;
+		return (ch1 - ch2)*MUL_FACTOR;
 	}
 
 	private double evalRemoveOpponent(MulinoState state, Position position) {

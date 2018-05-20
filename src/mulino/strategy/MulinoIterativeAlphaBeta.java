@@ -13,6 +13,8 @@ import mulino.ia.FunzioneEuristica;
 
 public class MulinoIterativeAlphaBeta implements AdversarialSearch<MulinoState, GameAction> {
 
+	private static final int NR_ITERATIONS = 1;
+	
 	private MulinoGame game;
 	private FunzioneEuristica heuristic;
 	private double utilMax;
@@ -54,7 +56,7 @@ public class MulinoIterativeAlphaBeta implements AdversarialSearch<MulinoState, 
 				
 				if(value > alpha) {
 					alpha = value;
-					System.out.println("new alpha (topLV) = " + alpha);
+					System.out.println(action + " new alpha (topLV) = " + alpha);
 					if(alpha>=utilMax) {
 						System.out.println("trovata mossa vincente: " + action);
 						break;
@@ -73,7 +75,7 @@ public class MulinoIterativeAlphaBeta implements AdversarialSearch<MulinoState, 
 					&& isSignificantlyBetter(newResults.utilValues.get(0), newResults.utilValues.get(1)))
 				break; // exit from iterative deepening loop
 
-		} while (heuristicEvaluationUsed && currDepthLimit<=4);
+		} while (heuristicEvaluationUsed && currDepthLimit<=NR_ITERATIONS);
 		
 		return actions.get(0);
 	}
@@ -90,20 +92,20 @@ public class MulinoIterativeAlphaBeta implements AdversarialSearch<MulinoState, 
 				value = Math.max(value, minValue(game.getResult(state, action), player, alpha, beta, depth + 1));
 				if (value >= beta) {
 					result = value;
-//					System.out.println("TAGLIO: val = " + result + " >= beta (" + beta + ")");
+					System.out.println("TAGLIO: val = " + result + " >= beta (" + beta + ")");
 					break;
 				}
 				
 				if(value > alpha) {
 					alpha = value;
-//					System.out.println("new alpha = " + alpha);
+					System.out.println("new alpha = " + alpha);
 				}
 			}
 			
 			result = value;
 		}
 		
-//		System.out.println(state + " val = " + result);
+		System.out.println(state + " val = " + result);
 		return result;
 	}
 
@@ -119,20 +121,20 @@ public class MulinoIterativeAlphaBeta implements AdversarialSearch<MulinoState, 
 				value = Math.min(value, maxValue(game.getResult(state, action), player, alpha, beta, depth + 1));
 				if (value <= alpha) {
 					result = value;
-//					System.out.println("TAGLIO: val = " + result + " <= alpha (" + alpha + ")");
+					System.out.println("TAGLIO: val = " + result + " <= alpha (" + alpha + ")");
 					break;
 				}
 				
 				if(value < beta) {
 					beta = value;
-//					System.out.println("new beta = " + beta);
+					System.out.println("new beta = " + beta);
 				}
 			}
 			
 			result = value;
 		}
 		
-//		System.out.println(state + " val = " + result);
+		System.out.println(state + " val = " + result);
 		return result;
 	}
 

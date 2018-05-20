@@ -30,26 +30,31 @@ public class TestSomeActions {
 		FunzioneEuristica heuristic = new FunzioneEuristica();
 		MulinoIterativeAlphaBeta search = new MulinoIterativeAlphaBeta(game, heuristic);
 		
-//		//es 1 : il bianco ha posizionato due pedine ai vertici opposti, il nero cosa fa? E il bianco
-//		//poi riesce a fare almeno un mulino?
-		b.put(new Position(3,3),Checker.WHITE);
-		b.put(new Position(-3,-3),Checker.WHITE);
-		
-//		b.put(new Position(3,-3),Checker.WHITE);
-		
-		b.put(new Position(-2,2),Checker.BLACK);
+////		//es 1 : il bianco ha posizionato due pedine ai vertici opposti, il nero cosa fa? E il bianco
+////		//poi riesce a fare almeno un mulino?
+//		b.put(new Position(3,3),Checker.WHITE);
+//		b.put(new Position(-3,-3),Checker.WHITE);
+//		
+////		b.put(new Position(3,-3),Checker.WHITE);
+//		
+//		b.put(new Position(-2,2),Checker.BLACK);
+//
+////		b.put(new Position(3, 0),Checker.BLACK);
+////		b.put(new Position(-3,3),Checker.BLACK);
+//		
+//		MulinoState state = new MulinoState(b,7,8);
+//		state.setDutyPlayer(Checker.BLACK);
 
-//		b.put(new Position(3, 0),Checker.BLACK);
-//		b.put(new Position(-3,3),Checker.BLACK);
-		
-		MulinoState state = new MulinoState(b,7,8);
-		state.setDutyPlayer(Checker.BLACK);
-
-//		//es2 : il nero deve bloccare un mulino
+		//es2 : il nero deve bloccare un mulino
 //		b.put(new Position(-2,2),Checker.WHITE);
 //		b.put(new Position(-2,-2),Checker.WHITE);
 //		
+//		b.put(new Position(2,-2),Checker.WHITE);
+//		
 //		b.put(new Position(2,2),Checker.BLACK);
+//		b.put(new Position(-2,0),Checker.BLACK);
+//		b.put(new Position(0,-2),Checker.BLACK);
+//
 //		
 //		MulinoState state = new MulinoState(b,7,8);
 //		state.setDutyPlayer(Checker.BLACK);
@@ -58,8 +63,9 @@ public class TestSomeActions {
 //		b.put(new Position(-3,-3),Checker.WHITE);
 //		b.put(new Position(-2,2),Checker.WHITE);
 //		b.put(new Position(0,2),Checker.WHITE);
+////		b.put(new Position(-2,-2),Checker.WHITE);
 //
-//		
+////		b.put(new Position(2,2),Checker.BLACK);
 //		b.put(new Position(0,-2),Checker.BLACK);
 //		b.put(new Position(2,-2),Checker.BLACK);
 //		
@@ -184,30 +190,30 @@ public class TestSomeActions {
 		
 		System.out.println("---------------------");
 		
-		// seconda mossa
-		GameAction action2 = search.makeDecision((MulinoState) nextState);
-		System.out.println(action2);
-		GameState nextState2 = action2.perform(nextState);
-		System.out.println(nextState2);
+//		// seconda mossa
+//		GameAction action2 = search.makeDecision((MulinoState) nextState);
+//		System.out.println(action2);
+//		GameState nextState2 = action2.perform(nextState);
+//		System.out.println(nextState2);
+//		
+//		// terza mossa
+//		GameAction action3 = search.makeDecision((MulinoState) nextState2);
+//		System.out.println(action3);
+//		GameState nextState3 = action3.perform(nextState2);
+//		System.out.println(nextState3);
+//
+//		// quarta mossa
+//		GameAction action4 = search.makeDecision((MulinoState) nextState3);
+//		System.out.println(action4);
+//		GameState nextState4 = action4.perform(nextState3);
+//		System.out.println(nextState4);
+//		
 		
-		// terza mossa
-		GameAction action3 = search.makeDecision((MulinoState) nextState2);
-		System.out.println(action3);
-		GameState nextState3 = action3.perform(nextState2);
-		System.out.println(nextState3);
-
-		// quarta mossa
-		GameAction action4 = search.makeDecision((MulinoState) nextState3);
-		System.out.println(action4);
-		GameState nextState4 = action4.perform(nextState3);
-		System.out.println(nextState4);
-		
-		
-		System.out.println("---------------");
-		System.out.println(nextState);
-		System.out.println(nextState2);
-		System.out.println(nextState3);
-		System.out.println(nextState4);
+//		System.out.println("---------------");
+//		System.out.println(nextState);
+//		System.out.println(nextState2);
+//		System.out.println(nextState3);
+//		System.out.println(nextState4);
 		
 	}
 
