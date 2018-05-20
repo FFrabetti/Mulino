@@ -2,7 +2,6 @@ import game.interaction.Diplomat;
 import game.mind.Mind;
 import game.mind.StrategyFactory;
 import it.unibo.ai.didattica.mulino.domain.State.Checker;
-import mulino.AlphaBetaStrategyFactory;
 import mulino.EndlessAlphaBetaStrategyFactory;
 import mulino.MulinoMind;
 import mulino.MulinoSettings;

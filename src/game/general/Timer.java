@@ -13,7 +13,7 @@ public class Timer extends AlertingThread {
 	}
 	
 	public void run() {
-		Thread t = Thread.currentThread();
+//		Thread t = Thread.currentThread();
 //		System.out.println("Thread " + t.getName() + ":Timer - inizio countdown");
 		
 		try {
