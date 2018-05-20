@@ -74,10 +74,9 @@ public class MulinoState extends GameState {
 
 	@Override
 	public boolean isOver() {
-		// TODO: se uno non si può muovere (fase2)?
 		// TODO: patta se stesso stato ripetuto?
-		return getCurrentPhase() == Phase.FINAL
-				&& (board.checkers(Checker.WHITE) < 3 || board.checkers(Checker.BLACK) < 3);
+		return !hasLegitActions() || (getCurrentPhase() == Phase.FINAL
+				&& (board.checkers(Checker.WHITE) < 3 || board.checkers(Checker.BLACK) < 3));
 	}
 
 	@Override
@@ -146,6 +145,11 @@ public class MulinoState extends GameState {
 		}
 
 		return isolatedEnemies.isEmpty() ? mulinoEnemies : isolatedEnemies;
+	}
+	
+	// per isOver, se non posso fare niente ho perso
+	public boolean hasLegitActions() {
+		return getCurrentPhase()!=Phase.SECOND || board.getPositions(dutyPlayer).stream().anyMatch(board::hasFreeAdiacend);
 	}
 
 	@Override

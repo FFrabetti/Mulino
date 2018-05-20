@@ -294,6 +294,10 @@ public class Board {
 		return adiacent(p).stream().filter(this::isFree).collect(Collectors.toList());
 	}
 	
+	public boolean hasFreeAdiacend(Position p) {
+		return adiacent(p).stream().filter(this::isFree).anyMatch(e -> true); 
+	}
+	
 	// more efficient version
 //	public Stream<Position> freeAdiacentStream(Position p) {
 //		return adiacent(p).stream().filter(this::isFree);

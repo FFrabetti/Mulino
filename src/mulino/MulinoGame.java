@@ -1,25 +1,39 @@
 package mulino;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import aima.core.search.adversarial.Game;
 import game.general.GameAction;
 import it.unibo.ai.didattica.mulino.domain.State.Checker;
 
+public class MulinoGame implements Game<MulinoState, GameAction, Checker> {
 
-public class MulinoGame implements Game<MulinoState, MulinoAction, Checker> {
+	private double victoryValue;
+	private double lostValue;
+	
+	private static final Checker[] players = new Checker[] { Checker.WHITE , Checker.BLACK };
 
-	private MulinoState initialState = new MulinoState();
+	public MulinoGame(double victoryValue, double lostValue) {
+		this.victoryValue = victoryValue;
+		this.lostValue = lostValue;
+	}
+		
+	public double getVictoryValue() {
+		return victoryValue;
+	}
+
+	public double getLostValue() {
+		return lostValue;
+	}
 
 	@Override
-	public MulinoState getInitialState() {
-		return initialState;
+	public MulinoState getInitialState() { // never used
+		return null;
 	}
 
 	@Override
 	public Checker[] getPlayers() {
-		return new Checker[] { Checker.WHITE , Checker.BLACK };
+		return players;
 	}
 
 	@Override
@@ -27,45 +41,27 @@ public class MulinoGame implements Game<MulinoState, MulinoAction, Checker> {
 		return state.getDutyPlayer();
 	}
 
-	//il metodo vuole delle MulinoAction, ma il nostro torna delle GameAction
-	// faccio conversione per non fare casino per ora
 	@Override
-	public List<MulinoAction> getActions(MulinoState state) {
-		List<GameAction> actions = state.legitActions();
-		List<MulinoAction> mActions = new ArrayList<MulinoAction>();
-		for(GameAction action : actions) {
-			mActions.add((MulinoAction)action);
-		}
-		return mActions;
+	public List<GameAction> getActions(MulinoState state) {
+		return state.legitActions();
 	}
 
 	@Override
-	public MulinoState getResult(MulinoState state, MulinoAction action) {
-		MulinoState result = (MulinoState) action.perform(state);
-		//result.mark(action);
-		return result;
+	public MulinoState getResult(MulinoState state, GameAction action) {
+		return (MulinoState) action.perform(state);
 	}
 
 	@Override
 	public boolean isTerminal(MulinoState state) {
-//		if(state.getUtility()!=-2) {
-//			System.out.println("---------------------------------------\nDEBUG:STATO TERMINALE:");
-//			System.out.println(state.toString());
-//			return true;
-//		}
-//		else return false;
-		return state.getUtility() != -2;
+		return state.isOver();
 	}
 
 	@Override
 	public double getUtility(MulinoState state, Checker player) {
-		double result = state.getUtility();
-		if (result != -2) {
-			if (player==Checker.BLACK)
-				result = - result;
-		} else {
-			throw new IllegalArgumentException("State is not terminal.");
-		}
-		return result;
+		if(!state.hasLegitActions())
+			return state.getDutyPlayer()==player ? lostValue : victoryValue;
+		else
+			return state.getBoard().checkers(player)<3 ? lostValue : victoryValue;
 	}
+
 }
