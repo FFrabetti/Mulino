@@ -8,25 +8,20 @@ public class ThinkingThread extends AlertingThread {
 	private GameState currentState;
 	private Strategy strategy;
 	
-	public ThinkingThread(WaitingQueue queue, StrategyFactory strategyFactory, GameState currentState, ThinkingStatus thinkingStatus) {
+	public ThinkingThread(WaitingQueue queue, StrategyFactory strategyFactory, GameState currentState) {
 		super(queue);
 		
 		this.currentState=currentState;
 		this.strategy=strategyFactory.selectStrategy(currentState);
-		strategy.setThinkingStatus(thinkingStatus); //to make the strategy begin from a thought already done
 	}
 	
-	public ThinkingThread(WaitingQueue queue, StrategyFactory strategyFactory, GameState currentState) {
-		this(queue, strategyFactory, currentState, null);
-	}
-
 	public GameAction getSelectedAction() {
 		return strategy.getSelectedAction();
 	}
 	
 	public void run() {
-		Thread t = Thread.currentThread();
-		System.out.println("Thread " + t.getName() + ":ThinkingThread - incomincio a pensare");
+//		Thread t = Thread.currentThread();
+//		System.out.println("Thread " + t.getName() + ":ThinkingThread - incomincio a pensare");
 
 		strategy.chooseAction(currentState);
 		

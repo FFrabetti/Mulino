@@ -6,7 +6,7 @@ import game.mind.StrategyFactory;
 import it.unibo.ai.didattica.mulino.domain.State.Phase;
 import mulino.strategy.*;
 
-public class MulinoStrategyFactory implements StrategyFactory{
+public class RandomStrategyFactory implements StrategyFactory{
 
 	@Override
 	public Strategy selectStrategy(GameState state) {

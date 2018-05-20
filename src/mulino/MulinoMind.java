@@ -9,10 +9,10 @@ public class MulinoMind extends Mind {
 	private State.Checker checker;
 	
 	// interface MulinoServer per maggiore flessibilità?
-	public MulinoMind(MulinoTCPServer server, StrategyFactory strategyFactory) {
-		super(server, strategyFactory);
+	public MulinoMind(MulinoTCPClient client, StrategyFactory strategyFactory) {
+		super(client, strategyFactory);
 		
-		checker = server.getChecker();
+		checker = client.getChecker();
 	}
 
 	@Override

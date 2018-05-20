@@ -1,25 +1,24 @@
 package game.mind;
 
 import game.general.GameAction;
-import game.general.GameServer;
+import game.general.GameClient;
 import game.general.GameState;
 import game.general.Timer;
 import mulino.MulinoSettings;
 
 public abstract class Mind {
 
-	private GameServer server;
+	private GameClient client;
 	private StrategyFactory strategyFactory;
 	
 	// state pattern: internal mind state
 	private StateFactory mindStates;
 	private MindState state;
-	private ThinkingStatus thinkingStatus=null;
 	
 	private GameState gameState;
 	
-	public Mind(GameServer server, StrategyFactory strategyFactory) {
-		this.server = server;
+	public Mind(GameClient client, StrategyFactory strategyFactory) {
+		this.client = client;
 		this.strategyFactory = strategyFactory;
 		
 		mindStates = new StateFactory();
@@ -83,7 +82,7 @@ public abstract class Mind {
 		@Override
 		public void handle() {
 			// set the initial state of the game (received from the server)
-			setGameState(server.getInitState()); // wait...
+			setGameState(client.getInitState()); // wait...
 		}
 
 		@Override
@@ -103,11 +102,11 @@ public abstract class Mind {
 		// return -> mind stateChanged
 		@Override
 		public void handle() {
-			System.out.println("--------------------------------------------\nStato di play");
+//			System.out.println("--------------------------------------------\nStato di play");
 			WaitingQueue queue = new WaitingQueue();
 			
 			Timer timer = new Timer(queue, MulinoSettings.TIMER);
-			ThinkingThread thinkingThr = new ThinkingThread(queue, strategyFactory, gameState, thinkingStatus);
+			ThinkingThread thinkingThr = new ThinkingThread(queue, strategyFactory, gameState);
 
 			timer.start();
 			thinkingThr.start();
@@ -120,14 +119,14 @@ public abstract class Mind {
 				GameAction action = thinkingThr.getSelectedAction();
 				
 				// ---------- DEBUG ---------- 
-				printInfo(action);
+//				printInfo(action);
 				// ---------- DEBUG ----------
 				
-				server.playAction(action);
+				client.playAction(action);
 				setGameState(action.perform(gameState));
 				
 				 // state after my own move
-				server.getInitState(); // read senza conversione, tanto è uno stato che non uso
+				client.getInitState(); // read senza conversione, tanto è uno stato che non uso
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -149,18 +148,17 @@ public abstract class Mind {
 		// return -> mind stateChanged
 		@Override
 		public void handle() {
-			System.out.println("--------------------------------------------\nStato di wait");
-			WaitingThread waitingThr = new WaitingThread(strategyFactory, gameState);
-			waitingThr.start();
+//			System.out.println("--------------------------------------------\nStato di wait");
+//			WaitingThread waitingThr = new WaitingThread(strategyFactory, gameState);
+//			waitingThr.start();
 			
-			GameState gameState = server.getCurrentState(); // waiting...
+			GameState gameState = client.getCurrentState(); // waiting...
 			
 			// ---------- DEBUG ----------
-			printInfo(gameState);
+//			printInfo(gameState);
 			// ---------- DEBUG ----------
 			
-			waitingThr.interrupt();
-			thinkingStatus = waitingThr.getThinkingStatus();
+//			waitingThr.interrupt();
 			
 			setGameState(gameState);
 		}
@@ -186,12 +184,12 @@ public abstract class Mind {
 	}
 	
 	//Per DEBUG
-	private void printInfo(GameState gameState) {
-		System.out.println(gameState);
-	}
-	
-	private void printInfo(GameAction gameAction) {
-		System.out.println("Action: " + gameAction);
-	}
+//	private void printInfo(GameState gameState) {
+//		System.out.println(gameState);
+//	}
+//	
+//	private void printInfo(GameAction gameAction) {
+//		System.out.println("Action: " + gameAction);
+//	}
 
 }

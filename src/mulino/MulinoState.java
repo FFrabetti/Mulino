@@ -21,7 +21,6 @@ public class MulinoState extends GameState {
 	private Checker dutyPlayer;
 	private int[] availableCheckers; // per fase 1
 	private Board board;
-	private double utility = -2;
 
 	public MulinoState(Board board, int avWCheckers, int avBCheckers) {
 		dutyPlayer = Checker.WHITE;
@@ -210,43 +209,6 @@ public class MulinoState extends GameState {
 	@Override
 	public String toString() {
 		return dutyPlayer + " [" + getCurrentPhase() + "]\n" + board;
-	}
-
-	// ----AGGIUNTE PER MINIMAX
-
-	public double getUtility() {
-		return utility;
-	}
-
-	public void analyzeUtility() {
-		// simile alla isOver...da guardarci
-		Phase phase = getCurrentPhase();
-
-		if (phase == Phase.FINAL) {
-			// se il bianco ha meno di 3 pedine: -1 W / +1 B
-			if (board.checkers(Checker.WHITE) < 3)
-				utility = -1;
-
-			// se il nero ha meno di 3 pedine: +1 W / -1 B
-			else if (board.checkers(Checker.BLACK) < 3)
-				utility = 1;
-		} else {
-			// se il bianco non puà muoversi: -1 W / +1 B
-			if (phase == Phase.SECOND && !hasAvailableMoves(Checker.WHITE))
-				utility = -1;
-
-			// se il nero non puà muoversi: +1 W / -1 B
-			if (phase == Phase.SECOND && !hasAvailableMoves(Checker.BLACK))
-				utility = 1;
-		}
-	}
-
-	private boolean hasAvailableMoves(Checker checker) {
-		for (Position p : board.getPositions(checker)) {
-			if (!board.freeAdiacent(p).isEmpty())
-				return true;
-		}
-		return false;
 	}
 
 }

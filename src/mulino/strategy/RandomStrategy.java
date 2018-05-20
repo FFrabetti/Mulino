@@ -6,7 +6,6 @@ import java.util.Random;
 import game.general.GameAction;
 import game.general.GameState;
 import game.mind.Strategy;
-import game.mind.ThinkingStatus;
 
 public class RandomStrategy extends Strategy {
 
@@ -19,7 +18,7 @@ public class RandomStrategy extends Strategy {
 	@Override
 	public void chooseAction(GameState state) {
 		try {
-			Thread.sleep(2000);
+			Thread.sleep(1000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -27,7 +26,7 @@ public class RandomStrategy extends Strategy {
 		List<GameAction> actions = state.legitActions();
 		GameAction action = actions.get(rnd.nextInt(actions.size()));
 				
-		setThinkingStatus(new ThinkingStatus(action, state, null));
+		setSelectedAction(action);
 		
 //		System.out.println("Immetti le coordinate dove vuoi inserire una pedina");
 //		Scanner sc = new Scanner(System.in);

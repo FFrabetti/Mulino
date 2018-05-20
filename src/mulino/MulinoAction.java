@@ -38,7 +38,6 @@ public abstract class MulinoAction implements GameAction{
 		if (removeOpponent.isPresent())
 			newState.removeChecker(removeOpponent.get());
 		
-		newState.analyzeUtility();//è necessario settare il valore utility dello stato per il minimax
 		newState.switchDutyPlayer(); // poi toccherà all'avversario
 
 		return newState;

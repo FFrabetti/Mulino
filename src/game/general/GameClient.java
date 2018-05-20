@@ -1,6 +1,6 @@
 package game.general;
 
-public interface GameServer {
+public interface GameClient {
 	
 	public void playAction(GameAction action);
 	

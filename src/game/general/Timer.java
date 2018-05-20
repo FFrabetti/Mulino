@@ -14,7 +14,7 @@ public class Timer extends AlertingThread {
 	
 	public void run() {
 		Thread t = Thread.currentThread();
-		System.out.println("Thread " + t.getName() + ":Timer - inizio countdown");
+//		System.out.println("Thread " + t.getName() + ":Timer - inizio countdown");
 		
 		try {
 //			int cont=0;
@@ -25,11 +25,11 @@ public class Timer extends AlertingThread {
 			sleep(seconds*1000);
 			alert(); // waking up the mind
 			
-			System.out.println("Thread " + t.getName() + ":Timer - tempo finito!");	
+//			System.out.println("Thread " + t.getName() + ":Timer - tempo finito!");	
 			
 		} catch (InterruptedException e) {
 			//e.printStackTrace();
-			System.out.println("Mossa eseguita: timer fermato");
+//			System.out.println("Mossa eseguita: timer fermato");
 		}
 	}
 }

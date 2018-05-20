@@ -303,27 +303,27 @@ public class Board {
 //		return adiacent(p).stream().filter(this::isFree);
 //	}
 
-//	@Override
-//	public String toString() {
-//		StringBuilder sb = new StringBuilder("Board:\n");
-//		map.forEach((Position p, Checker c) -> sb.append(p + ": " + c + "\n"));
-//		return sb.toString();
-//	}
-	
-	// "en fin, la dernière version"
 	@Override
 	public String toString() {
-		StringBuffer result = new StringBuffer();
-		result.append(" 3 " + getPos(-3,3) + "--------" + getPos(0,3) + "--------" + getPos(3,3) + "\n");
-		result.append(" 2 |  " + getPos(-2,2) + "-----" + getPos(0,2) + "-----" + getPos(2,2) + "  |\n");
-		result.append(" 1 |  |  " + getPos(-1,1) + "--" + getPos(0,1) + "--" + getPos(1,1) + "  |  |\n");
-		result.append(" 0 " + getPos(-3,0) + "--" + getPos(-2,0) + "--" + getPos(-1,0) + "     "
-				+ getPos(1,0) + "--" + getPos(2,0) + "--" + getPos(3,0) + "\n");
-		result.append("-1 |  |  " + getPos(-1,-1) + "--" + getPos(0,-1) + "--" + getPos(1,-1) + "  |  |\n");
-		result.append("-2 |  " + getPos(-2,-2) + "-----" + getPos(0,-2) + "-----" + getPos(2,-2) + "  |\n");
-		result.append("-3 " + getPos(-3,-3) + "--------" + getPos(0,-3) + "--------" + getPos(3,-3) + "\n");
-		result.append("  -3 -2 -1  0  1  2  3\n");
-		return result.toString();
+		StringBuilder sb = new StringBuilder("Board:\n");
+		map.forEach((Position p, Checker c) -> sb.append(p + ": " + c + "\n"));
+		return sb.toString();
 	}
 	
+	// "en fin, la dernière version"
+//	@Override
+//	public String toString() {
+//		StringBuffer result = new StringBuffer();
+//		result.append(" 3 " + getPos(-3,3) + "--------" + getPos(0,3) + "--------" + getPos(3,3) + "\n");
+//		result.append(" 2 |  " + getPos(-2,2) + "-----" + getPos(0,2) + "-----" + getPos(2,2) + "  |\n");
+//		result.append(" 1 |  |  " + getPos(-1,1) + "--" + getPos(0,1) + "--" + getPos(1,1) + "  |  |\n");
+//		result.append(" 0 " + getPos(-3,0) + "--" + getPos(-2,0) + "--" + getPos(-1,0) + "     "
+//				+ getPos(1,0) + "--" + getPos(2,0) + "--" + getPos(3,0) + "\n");
+//		result.append("-1 |  |  " + getPos(-1,-1) + "--" + getPos(0,-1) + "--" + getPos(1,-1) + "  |  |\n");
+//		result.append("-2 |  " + getPos(-2,-2) + "-----" + getPos(0,-2) + "-----" + getPos(2,-2) + "  |\n");
+//		result.append("-3 " + getPos(-3,-3) + "--------" + getPos(0,-3) + "--------" + getPos(3,-3) + "\n");
+//		result.append("  -3 -2 -1  0  1  2  3\n");
+//		return result.toString();
+//	}
+//	
 }

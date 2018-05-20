@@ -4,21 +4,21 @@ import java.io.IOException;
 
 import game.general.GameAction;
 import game.general.GameFactory;
-import game.general.GameServer;
+import game.general.GameClient;
 import game.general.GameState;
 import game.interaction.Diplomat;
 import it.unibo.ai.didattica.mulino.actions.Action;
 import it.unibo.ai.didattica.mulino.domain.State;
 import it.unibo.ai.didattica.mulino.domain.State.Checker;
-import mulino.exception.MulinoServerException;
+import mulino.exception.MulinoClientException;
 
-public class MulinoTCPServer implements GameServer {
+public class MulinoTCPClient implements GameClient {
 
 	private Checker checker;
 	private Diplomat diplomat;
 	private GameFactory<State, Action> factory;
 	
-	public MulinoTCPServer(Checker checker, Diplomat diplomat) {
+	public MulinoTCPClient(Checker checker, Diplomat diplomat) {
 		this.checker = checker;
 		this.diplomat = diplomat;
 		
@@ -33,10 +33,10 @@ public class MulinoTCPServer implements GameServer {
 	public void playAction(GameAction action) {
 		try {
 			diplomat.write(factory.toAction(action));
-			System.out.println("DEBUG:ho inviato l'azione");
+//			System.out.println("DEBUG:ho inviato l'azione");
 
 		} catch (IOException e) {
-			throw new MulinoServerException(e);
+			throw new MulinoClientException(e);
 		}
 	}
 
@@ -50,7 +50,7 @@ public class MulinoTCPServer implements GameServer {
 
 			return ms;
 		} catch (Exception e) {
-			throw new MulinoServerException(e);
+			throw new MulinoClientException(e);
 		}
 	}
 	
@@ -65,7 +65,7 @@ public class MulinoTCPServer implements GameServer {
 			diplomat.read();			// posso evitare la conversione della factory
 			return new MulinoState();	// stato iniziale: tocca al bianco e la board è vuota
 		} catch (Exception e) {
-			throw new MulinoServerException(e);
+			throw new MulinoClientException(e);
 		}
 	}
 
