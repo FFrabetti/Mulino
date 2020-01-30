@@ -12,15 +12,16 @@ import it.unibo.ai.didattica.mulino.domain.State.Checker;
 
 public class Board {
 
-	private static final Position[] positions = new Position[] { new Position(-3, 3), new Position(0, 3),
-			new Position(3, 3), new Position(-2, 2), new Position(0, 2), new Position(2, 2), new Position(-1, 1),
-			new Position(0, 1), new Position(1, 1),
-
-			new Position(-3, 0), new Position(-2, 0), new Position(-1, 0), new Position(1, 0), new Position(2, 0),
-			new Position(3, 0),
-
-			new Position(-1, -1), new Position(0, -1), new Position(1, -1), new Position(-2, -2), new Position(0, -2),
-			new Position(2, -2), new Position(-3, -3), new Position(0, -3), new Position(3, -3) };
+	private Position[] positions = new Position[] {
+			new Position(-3, -3), new Position(-3, 0), new Position(-3, 3),
+			new Position(-2, -2), new Position(-2, 0), new Position(-2, 2),
+			new Position(-1, -1), new Position(-1, 0), new Position(-1, 1),
+			new Position(0, -3),  new Position(0, -2), new Position(0, -1),
+			new Position(0, 1),   new Position(0, 2),  new Position(0, 3),
+			new Position(1, -1),  new Position(1, 0),  new Position(1, 1),
+			new Position(2, -2),  new Position(2, 0),  new Position(2, 2),
+			new Position(3, -3),  new Position(3, 0),  new Position(3, 3)
+	};
 
 	private Map<Position, Checker> map;
 	private int[] checkers; // potrei contarle ogni volta, ma è più veloce averle
@@ -40,6 +41,10 @@ public class Board {
 		// empty positions simply aren't in the map!
 		// for(Position p : positions)
 		// map.put(p, Checker.EMPTY);
+	}
+	
+	public Position[] positions() {
+		return positions;
 	}
 
 	public int checkers(Checker checker) {
@@ -101,16 +106,28 @@ public class Board {
 	}
 
 	public Checker getChecker(Position p) {
-		return getPos(p.getX(), p.getY());
+		return map.getOrDefault(p, Checker.EMPTY);
+	}
+
+	public Position getPos(int x, int y) {
+		int index = 0;
+		if(x == 0)
+			index = y>0 ? y+11 : y+12;				// 9 (-3+12), 10 (-2+12), 11 (-1+12), 12 (1+11), 13 (2+11), 14 (3+11)
+		else if(x < 0)								// x = -3           , -2               , -1
+			index = (x+3)*3 + sign0(y) + 1; 		// 0,1,2 (0+[0,1,2]), 3,4,5 (3+[0,1,2]), 6,7,8 (6+[0,1,2])
+		else // x > 0                               // x = 1                   , 2                       , 3
+			index = (x-3)*3 + 21 + sign0(y) + 1; 	// 15,16,17 (-6+21+[0,1,2]), 18,19,20 (-3+21+[0,1,2]), 21,22,23 (21+[0,1,2])
+		
+		return positions[index];
 	}
 	
-	private Checker getPos(int x, int y) {
-		return map.getOrDefault(new Position(x, y), Checker.EMPTY);
+	private Checker getChecker(int x, int y) {
+		return getChecker(getPos(x, y));
 	}
 
 	private boolean halfColumn(int sign, Checker checker) {
 		for (int i = 1; i <= 3; i++) // tutti e 3 i livelli
-			if(getPos(0, i*sign) != checker) // devono esserci 3 pedine uguali
+			if(getChecker(0, i*sign) != checker) // devono esserci 3 pedine uguali
 				return false;
 		
 		return true;
@@ -118,10 +135,14 @@ public class Board {
 	
 	private boolean halfRow(int sign, Checker checker) {
 		for (int i = 1; i <= 3; i++) // tutti e 3 i livelli
-			if(getPos(i*sign, 0) != checker) // devono esserci 3 pedine uguali
+			if(getChecker(i*sign, 0) != checker) // devono esserci 3 pedine uguali
 				return false;
 		
 		return true;
+	}
+	
+	private int sign0(int n) {
+		return n == 0 ? 0 : sign(n);
 	}
 	
 	private int sign(int n) {
@@ -138,16 +159,16 @@ public class Board {
 		
 		for(int i=0; i<3; i++) {
 			if (x != 0 && y != 0) { // punti sulle diagonali (vertici)
-				res[i] = new Position((-x)+i*x, y);		// riga, stessa y
-				res[i+3] = new Position(x, (-y)+i*y);	// col, stessa x
+				res[i] = getPos((-x)+i*x, y);		// riga, stessa y
+				res[i+3] = getPos(x, (-y)+i*y);		// col, stessa x
 			}
 			else if (x == 0) {	// asse y
-				res[i] = new Position((-y)+i*y, y);			// riga, stessa y
-				res[i+3] = new Position(0, (i+1)*sign(y));	// col, stessa x
+				res[i] = getPos((-y)+i*y, y);			// riga, stessa y
+				res[i+3] = getPos(0, (i+1)*sign(y));	// col, stessa x
 			}
 			else {	// asse x (y == 0)
-				res[i] = new Position((i+1)*sign(x), 0);	// riga, stessa y
-				res[i+3] = new Position(x, (-x)+i*x);		// col, stessa x
+				res[i] = getPos((i+1)*sign(x), 0);	// riga, stessa y
+				res[i+3] = getPos(x, (-x)+i*x);		// col, stessa x
 			}
 		}
 		
@@ -162,13 +183,13 @@ public class Board {
 		boolean res = false;
 		
 		if (x != 0 && y != 0) // punti sulle diagonali (vertici)
-			res = (getPos(-x, y) == checker && getPos(0, y) == checker) || // riga (x 0 -x, stessa y)
-					(getPos(x, -y) == checker && getPos(x, 0) == checker);  // colonna (stessa x, y 0 -y)
+			res = (getChecker(-x, y) == checker && getChecker(0, y) == checker) || // riga (x 0 -x, stessa y)
+					(getChecker(x, -y) == checker && getChecker(x, 0) == checker);  // colonna (stessa x, y 0 -y)
 		else if (x == 0)	// asse y
-			res = (getPos(y, y) == checker && getPos(-y, y) == checker) || // pt simm risp asse y
+			res = (getChecker(y, y) == checker && getChecker(-y, y) == checker) || // pt simm risp asse y
 					halfColumn(sign(y), checker);
 		else // asse x (y == 0)
-			res = (getPos(x, x) == checker && getPos(x, -x) == checker) || // pt simm risp asse x
+			res = (getChecker(x, x) == checker && getChecker(x, -x) == checker) || // pt simm risp asse x
 					halfRow(sign(x), checker);
 		
 		undoMove();
@@ -181,31 +202,31 @@ public class Board {
 		Checker checker = map.get(p);
 		
 		if (x != 0 && y != 0) // punti sulle diagonali (vertici)
-			return (getPos(-x, y) == checker && getPos(0, y) == checker // riga (x 0 -x, stessa y)
-					&& list.add(new Position(-x, y)) && list.add(new Position(0, y))) ||
-					(getPos(x, -y) == checker && getPos(x, 0) == checker // colonna (stessa x, y 0 -y)
-					&& list.add(new Position(x, -y)) && list.add(new Position(x, 0)));
+			return (getChecker(-x, y) == checker && getChecker(0, y) == checker // riga (x 0 -x, stessa y)
+					&& list.add(getPos(-x, y)) && list.add(getPos(0, y))) ||
+					(getChecker(x, -y) == checker && getChecker(x, 0) == checker // colonna (stessa x, y 0 -y)
+					&& list.add(getPos(x, -y)) && list.add(getPos(x, 0)));
 		else if (x == 0)	// asse y
-			return (getPos(y, y) == checker && getPos(-y, y) == checker // pt simm risp asse y
-					&& list.add(new Position(y, y)) && list.add(new Position(-y, y))) ||
+			return (getChecker(y, y) == checker && getChecker(-y, y) == checker // pt simm risp asse y
+					&& list.add(getPos(y, y)) && list.add(getPos(-y, y))) ||
 					(halfColumn(sign(y), checker) && addColumn(y, list));
 		else // asse x (y == 0)
-			return (getPos(x, x) == checker && getPos(x, -x) == checker // pt simm risp asse x
-					&& list.add(new Position(x, x)) && list.add(new Position(x, -x))) ||
+			return (getChecker(x, x) == checker && getChecker(x, -x) == checker // pt simm risp asse x
+					&& list.add(getPos(x, x)) && list.add(getPos(x, -x))) ||
 					(halfRow(sign(x), checker) && addRow(x, list));
 	}
 
 	private boolean addColumn(int y, List<Position> list) {
 		for (int i = 1; i <= 3; i++)
 			if(i!=Math.abs(y)) // the original position is added by the calling method
-				list.add(new Position(0, i*sign(y)));
+				list.add(getPos(0, i*sign(y)));
 		return true;
 	}
 
 	private boolean addRow(int x, List<Position> list) {
 		for (int i = 1; i <= 3; i++)
 			if(i!=Math.abs(x)) // the original position is added by the calling method
-				list.add(new Position(i*sign(x), 0));
+				list.add(getPos(i*sign(x), 0));
 		return true;
 	}
 
@@ -257,23 +278,23 @@ public class Board {
 	
 		if(y==0) { // asse x
 			if(isValidCoordinate(x+1))
-				list.add(new Position(x+1, 0));
+				list.add(getPos(x+1, 0));
 			if(isValidCoordinate(x-1))
-				list.add(new Position(x-1, 0));
-			list.add(new Position(x, x));
-			list.add(new Position(x, -x));
+				list.add(getPos(x-1, 0));
+			list.add(getPos(x, x));
+			list.add(getPos(x, -x));
 		}
 		else if(x==0) { // asse y
 			if(isValidCoordinate(y+1))
-				list.add(new Position(0, y+1));
+				list.add(getPos(0, y+1));
 			if(isValidCoordinate(y-1))
-				list.add(new Position(0, y-1));
-			list.add(new Position(y, y));
-			list.add(new Position(-y, y));
+				list.add(getPos(0, y-1));
+			list.add(getPos(y, y));
+			list.add(getPos(-y, y));
 		}
 		else { // diagonali
-			list.add(new Position(x, 0));
-			list.add(new Position(0, y));
+			list.add(getPos(x, 0));
+			list.add(getPos(0, y));
 		}
 		
 		return list;
@@ -311,19 +332,70 @@ public class Board {
 	}
 	
 	// "en fin, la dernière version"
-//	@Override
-//	public String toString() {
-//		StringBuffer result = new StringBuffer();
-//		result.append(" 3 " + getPos(-3,3) + "--------" + getPos(0,3) + "--------" + getPos(3,3) + "\n");
-//		result.append(" 2 |  " + getPos(-2,2) + "-----" + getPos(0,2) + "-----" + getPos(2,2) + "  |\n");
-//		result.append(" 1 |  |  " + getPos(-1,1) + "--" + getPos(0,1) + "--" + getPos(1,1) + "  |  |\n");
-//		result.append(" 0 " + getPos(-3,0) + "--" + getPos(-2,0) + "--" + getPos(-1,0) + "     "
-//				+ getPos(1,0) + "--" + getPos(2,0) + "--" + getPos(3,0) + "\n");
-//		result.append("-1 |  |  " + getPos(-1,-1) + "--" + getPos(0,-1) + "--" + getPos(1,-1) + "  |  |\n");
-//		result.append("-2 |  " + getPos(-2,-2) + "-----" + getPos(0,-2) + "-----" + getPos(2,-2) + "  |\n");
-//		result.append("-3 " + getPos(-3,-3) + "--------" + getPos(0,-3) + "--------" + getPos(3,-3) + "\n");
-//		result.append("  -3 -2 -1  0  1  2  3\n");
-//		return result.toString();
-//	}
-//	
+	public String niceToString() {
+		StringBuffer result = new StringBuffer();
+		result.append(" 3 " + getChecker(-3,3) + "--------" + getChecker(0,3) + "--------" + getChecker(3,3) + "\n");
+		result.append(" 2 |  " + getChecker(-2,2) + "-----" + getChecker(0,2) + "-----" + getChecker(2,2) + "  |\n");
+		result.append(" 1 |  |  " + getChecker(-1,1) + "--" + getChecker(0,1) + "--" + getChecker(1,1) + "  |  |\n");
+		result.append(" 0 " + getChecker(-3,0) + "--" + getChecker(-2,0) + "--" + getChecker(-1,0) + "     "
+				+ getChecker(1,0) + "--" + getChecker(2,0) + "--" + getChecker(3,0) + "\n");
+		result.append("-1 |  |  " + getChecker(-1,-1) + "--" + getChecker(0,-1) + "--" + getChecker(1,-1) + "  |  |\n");
+		result.append("-2 |  " + getChecker(-2,-2) + "-----" + getChecker(0,-2) + "-----" + getChecker(2,-2) + "  |\n");
+		result.append("-3 " + getChecker(-3,-3) + "--------" + getChecker(0,-3) + "--------" + getChecker(3,-3) + "\n");
+		result.append("  -3 -2 -1  0  1  2  3\n");
+		return result.toString();
+	}
+	
+	public class Position {
+
+		private int x;
+		private int y;
+		
+		public Position(int x, int y) {
+//			int absX = Math.abs(x);
+//			int absY = Math.abs(y);
+//			if((x==0 && y==0) || absX>3 || absY>3 || (x*y!=0 && absX!=absY))
+//				throw new IllegalArgumentException("Invalid position: " + x + "," + y);
+				
+			this.x = x;
+			this.y = y;
+		}
+
+		public int getX() {
+			return x;
+		}
+
+		public void setX(int x) {
+			this.x = x;
+		}
+
+		public int getY() {
+			return y;
+		}
+
+		public void setY(int y) {
+			this.y = y;
+		}
+		
+		@Override
+		public boolean equals(Object o) {
+			if(!(o instanceof Position))
+				return false;
+			
+			Position p = (Position)o;	
+			return this.x==p.x && this.y==p.y;
+		}
+		
+		@Override
+		public int hashCode() {
+			return x ^ y;
+		}
+
+		@Override
+		public String toString() {
+			return "(" + x + "," + y + ")";
+		}
+		
+	}
+	
 }

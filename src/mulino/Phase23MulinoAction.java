@@ -2,6 +2,7 @@ package mulino;
 
 import game.general.GameState;
 import it.unibo.ai.didattica.mulino.domain.State.Phase;
+import mulino.Board.Position;
 
 public class Phase23MulinoAction extends MulinoAction {
 

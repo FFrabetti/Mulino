@@ -7,6 +7,7 @@ import game.general.GameAction;
 import game.general.GameState;
 import it.unibo.ai.didattica.mulino.domain.State.Checker;
 import it.unibo.ai.didattica.mulino.domain.State.Phase;
+import mulino.Board.Position;
 
 /*
  * Refactoring:

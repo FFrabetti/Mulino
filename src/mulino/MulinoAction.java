@@ -5,6 +5,7 @@ import java.util.Optional;
 import aima.core.agent.Action;
 import game.general.GameAction;
 import game.general.GameState;
+import mulino.Board.Position;
 
 public abstract class MulinoAction implements GameAction{
 

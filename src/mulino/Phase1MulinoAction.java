@@ -1,6 +1,7 @@
 package mulino;
 
 import game.general.GameState;
+import mulino.Board.Position;
 
 public class Phase1MulinoAction extends MulinoAction {
 	
